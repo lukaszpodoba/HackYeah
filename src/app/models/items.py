@@ -44,7 +44,7 @@ class User(Base):
 class As_history(Base):
     __tablename__ = 'as_history'
     id = Column(Integer, primary_key=True)
-    as_field = Column(Integer)
+    as_user = Column(Integer)
     user_id = Column(Integer, ForeignKey('user.id'))
 
     user = relationship("User", back_populates="as_history")
@@ -71,7 +71,7 @@ class Form(Base):
     user_id = Column(Integer, ForeignKey('user.id'))
     departure_id = Column(Integer, ForeignKey('departure.id'))
     report_time = Column(DateTime)
-    as_field = Column(Integer)
+    as_form = Column(Integer)
     confirmed_by_admin = Column(Boolean)
     like_total = Column(Integer)
     dislike_total = Column(Integer)

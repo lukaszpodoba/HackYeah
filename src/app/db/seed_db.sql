@@ -1,7 +1,6 @@
 PRAGMA foreign_keys = OFF;
 
 -- Czyszczenie tabel w odpowiedniej kolejności
-DELETE FROM main_view;
 DELETE FROM form;
 DELETE FROM departure;
 DELETE FROM as_history;
@@ -73,7 +72,7 @@ INSERT INTO user (first_name, last_name, password, role, line_id) VALUES
 -- ================================================
 -- as_history – historia ocen/punktów przypisana do użytkowników
 -- ================================================
-INSERT INTO as_history (as_field, user_id) VALUES
+INSERT INTO as_history (as_user, user_id) VALUES
 (10, 1),
 (25, 1),
 (40, 2),
@@ -109,27 +108,19 @@ VALUES
 (5, 10, '2025-10-04 10:25', '2025-10-04 10:30', '2025-10-04 10:28', '2025-10-04 10:33');
 
 -- ================================================
--- form – przykładowe zgłoszenia od pasażerów
+-- form – zgłoszenia użytkowników powiązane z połączeniami
 -- ================================================
-INSERT INTO form (report_time, stop_id, category, line_id, delay)
-VALUES
-('2025-10-04 06:40', 9, 'Opóźnienie pociągu', 1, 8),
-('2025-10-04 07:25', 5, 'Awaria sygnalizacji', 2, 15),
-('2025-10-04 08:10', 4, 'Utrudnienia techniczne', 3, 5),
-('2025-10-04 09:10', 2, 'Zmiana toru odjazdu', 4, 3),
-('2025-10-04 10:20', 10, 'Opóźnienie przez mgłę', 5, 12);
-
--- ================================================
--- main_view – każde zgłoszenie przypisane do jednego użytkownika
--- ================================================
-INSERT INTO main_view (user_id, departure_id, form_id, as_field, confirmed_by_admin, like_total, dislike_total) VALUES
-(1, 1, 1, 12, 1, 130, 5),
-(2, 3, 2, 7, 0, 75, 10),
-(3, 5, 3, 22, 1, 98, 4),
-(4, 7, 4, 9, 0, 34, 3),
-(5, 9, 5, 18, 1, 210, 2);
+INSERT INTO form (
+    user_id, departure_id, report_time, as_form, confirmed_by_admin, like_total, dislike_total,
+    stop_id, category, line_id, delay
+) VALUES
+(1, 1, '2025-10-04 06:40', 12, 1, 130, 5, 10, 'Opóźnienie pociągu', 1, 8),
+(2, 2, '2025-10-04 07:25', 7, 0, 75, 10, 9, 'Awaria sygnalizacji', 2, 15),
+(3, 3, '2025-10-04 08:10', 22, 1, 98, 4, 7, 'Utrudnienia techniczne', 3, 5),
+(4, 4, '2025-10-04 09:10', 9, 0, 34, 3, 6, 'Zmiana toru odjazdu', 4, 3),
+(5, 5, '2025-10-04 10:20', 18, 1, 210, 2, 7, 'Opóźnienie przez mgłę', 5, 12);
 
 -- ================================================
 -- Podsumowanie
 -- ================================================
-SELECT COUNT(*) AS liczba_wierszy FROM main_view;
+SELECT COUNT(*) AS liczba_zgloszen FROM form;
