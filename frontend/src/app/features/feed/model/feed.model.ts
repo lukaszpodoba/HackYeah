@@ -7,22 +7,28 @@ import {
   Coords,
 } from '../../../core/models/util.model';
 
-export interface Report {
+// TODO to be changed when dto
+export type TReport = {
   id: ID;
-  title?: string;
+  title: string;
   description?: string;
-  source: ReportSource; // typ markera/zgłoszenia
+  source: ReportSource;
   category: ReportCategory;
-  confidence: Confidence; // np. VERIFIED dla przewoźnika
+  confidence: Confidence;
   createdAt: ISODate;
-  updatedAt?: ISODate;
-  location: Coords;
-  placeName?: string; // np. nazwa przystanku / punkt POI
-  lineId?: ID; // ID linii (opcjonalnie)
-  connectionId?: ID; // ID konkretnego połączenia/relacji (opcjonalnie)
-  media?: { url: string; type: 'image' | 'video' }[];
+  updatedAt: ISODate;
+  location: [number, number];
+  placeName: string;
+  lineId: ID;
+  connectionId?: ID;
   author?: { id: ID; role: 'USER' | 'CARRIER' | 'SYSTEM'; displayName?: string };
-}
+
+  votes?: {
+    up: number;
+    down: number;
+    my?: 1 | -1 | 0;
+  };
+};
 
 export interface ReportFilter {
   bbox?: [number, number, number, number];

@@ -15,6 +15,7 @@ export enum ReportSource {
   USER = 'USER',
   SYSTEM = 'SYSTEM',
 }
+
 export enum ReportCategory {
   ROADWORKS = 'ROADWORKS',
   VEHICLE_FAILURE = 'VEHICLE_FAILURE',
@@ -28,3 +29,10 @@ export enum Confidence {
   HIGH = 'HIGH',
   VERIFIED = 'VERIFIED',
 }
+
+export const markerClassByType: Record<ReportCategory, string> = {
+  ROADWORKS: 'marker--incident',
+  VEHICLE_FAILURE: 'marker--delay',
+  ACCIDENT: 'marker--maintenance',
+  OTHER: 'marker--info',
+};

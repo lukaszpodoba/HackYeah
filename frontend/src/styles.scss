@@ -5,6 +5,7 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 @import 'tailwindcss';
+@import 'maplibre-gl/dist/maplibre-gl.css';
 
 html {
   @include mat.theme(
@@ -44,4 +45,55 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+@layer utilities {
+  .text-body-small {
+    @apply text-sm leading-snug text-gray-700;
+  }
+
+  .text-body-regular {
+    @apply text-base leading-normal text-gray-800;
+  }
+
+  .text-body-regular-bold {
+    @apply text-base font-semibold leading-normal text-gray-900;
+  }
+
+  .text-body-large {
+    @apply text-lg leading-normal text-gray-900;
+  }
+
+  .text-body-large-bold {
+    @apply text-lg font-semibold leading-normal text-gray-900;
+  }
+
+  .marker-base {
+    @apply w-8 h-8 rounded-full flex items-center justify-center shrink-0
+           text-white cursor-pointer ring-0 transition-shadow duration-150;
+  }
+  .marker-base:focus-visible,
+  .marker-base:hover {
+    @apply ring-2 ring-offset-2 ring-black/10;
+  }
+
+  /* Typy zgłoszeń — dobierz paletę pod siebie */
+  .marker--incident {
+    @apply bg-red-500;
+  }
+  .marker--delay {
+    @apply bg-amber-500;
+  }
+  .marker--maintenance {
+    @apply bg-blue-500;
+  }
+  .marker--info {
+    @apply bg-violet-500;
+  }
+  .marker--success {
+    @apply bg-emerald-500;
+  }
+  .marker--warning {
+    @apply bg-yellow-500;
+  }
 }
