@@ -14,3 +14,27 @@ def get_reports(user_id: int, db: Session = Depends(get_db)):
     if not reports:
         raise HTTPException(status_code=404, detail="Reports not found for this user")
     return reports
+
+@router.put("/reports/{id}/like", response_model=MainViewResponse)
+def increment_like(id: int, db: Session = Depends(get_db)):
+    db_report = db.query(MainView).filter(MainView.id == id).first()
+    if not db_report:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    db_report.like_total = (db_report.like_total or 0) + 1
+
+    db.commit()
+    db.refresh(db_report)
+    return db_report
+
+@router.put("/reports/{id}/dislike", response_model=MainViewResponse)
+def increment_dislike(id: int, db: Session = Depends(get_db)):
+    db_report = db.query(MainView).filter(MainView.id == id).first()
+    if not db_report:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    db_report.dislike_total = (db_report.dislike_total or 0) + 1
+
+    db.commit()
+    db.refresh(db_report)
+    return db_report
