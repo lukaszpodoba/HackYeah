@@ -20,9 +20,9 @@ def get_reports(user_id: int, db: Session = Depends(get_db)):
 
 
 # Return concrete form
-@router.get("/reports/{report_id}", response_model=FormResponse)
-def get_single_report(report_id: int, db: Session = Depends(get_db)):
-    report = db.query(Form).filter(Form.id == report_id).first()
+@router.get("/forms/{form_id}", response_model=FormResponse)
+def get_single_report(form_id: int, db: Session = Depends(get_db)):
+    report = db.query(Form).filter(Form.id == form_id).first()
     if not report:
         raise HTTPException(status_code=404, detail="Report not found")
     return report
