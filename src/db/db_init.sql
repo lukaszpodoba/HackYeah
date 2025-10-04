@@ -1,106 +1,107 @@
 -- ================================================
--- SQLite schema for hvckyeah.db
+-- SQLite schema for hvckyeah.db (ORM-aligned)
 -- ================================================
 
 PRAGMA foreign_keys = ON;
 
 -- ================================================
--- Tabela: Przystanek
+-- Tabela: stop
 -- ================================================
-CREATE TABLE IF NOT EXISTS Przystanek (
+DROP TABLE IF EXISTS stop;
+CREATE TABLE IF NOT EXISTS stop (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    kod_przystanku INTEGER NOT NULL UNIQUE,
-    nazwa_przystanku TEXT NOT NULL,
-    szerokosc_geo REAL,
-    dlugosc_geo REAL
+    stop_code INTEGER UNIQUE,
+    stop_name TEXT NOT NULL,
+    latitude REAL,
+    longitude REAL
 );
 
 -- ================================================
--- Tabela: Linia
+-- Tabela: line
 -- ================================================
-DROP TABLE IF EXISTS Linia;
-CREATE TABLE IF NOT EXISTS Linia (
+DROP TABLE IF EXISTS line;
+CREATE TABLE IF NOT EXISTS line (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nazwa_krotka TEXT NOT NULL UNIQUE,
-    nazwa_dluga TEXT
+    short_name TEXT,
+    long_name TEXT
 );
 
 -- ================================================
--- Tabela: Uzytkownik
+-- Tabela: user
 -- ================================================
-DROP TABLE IF EXISTS Uzytkownik;
-CREATE TABLE IF NOT EXISTS Uzytkownik (
+DROP TABLE IF EXISTS user;
+CREATE TABLE IF NOT EXISTS user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    imie TEXT NOT NULL,
-    nazwisko TEXT NOT NULL,
-    haslo TEXT NOT NULL,
-    rola TEXT,
-    as_score INTEGER,
-    linia_id INTEGER,
-    FOREIGN KEY (linia_id) REFERENCES Linia(id)
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT,
+    as_field INTEGER,
+    line_id INTEGER,
+    FOREIGN KEY (line_id) REFERENCES line(id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
 
 -- ================================================
--- Tabela: Odjazd
+-- Tabela: departure
 -- ================================================
-DROP TABLE IF EXISTS Odjazd;
-CREATE TABLE IF NOT EXISTS Odjazd (
+DROP TABLE IF EXISTS departure;
+CREATE TABLE IF NOT EXISTS departure (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    linia_id INTEGER,
-    przystanek_id INTEGER,
-    planowana_godzina_przyjazdu TEXT,
-    planowana_godzina_odjazdu TEXT,
-    rzeczywista_godzina_przyjazdu TEXT,
-    rzeczywista_godzina_odjazdu TEXT,
-    FOREIGN KEY (linia_id) REFERENCES Linia(id)
+    line_id INTEGER,
+    stop_id INTEGER,
+    planned_arrival_time TEXT,
+    planned_departure_time TEXT,
+    actual_arrival_time TEXT,
+    actual_departure_time TEXT,
+    FOREIGN KEY (line_id) REFERENCES line(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (przystanek_id) REFERENCES Przystanek(id)
+    FOREIGN KEY (stop_id) REFERENCES stop(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
 -- ================================================
--- Tabela: Formularz
+-- Tabela: form
 -- ================================================
-DROP TABLE IF EXISTS Formularz;
-CREATE TABLE IF NOT EXISTS Formularz (
+DROP TABLE IF EXISTS form;
+CREATE TABLE IF NOT EXISTS form (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    czas_zgloszenia TEXT DEFAULT CURRENT_TIMESTAMP,
-    przystanek_id INTEGER,
-    kategoria TEXT,
-    linia_id INTEGER,
-    opoznienie INTEGER,
-    FOREIGN KEY (przystanek_id) REFERENCES Przystanek(id)
+    report_time TEXT DEFAULT CURRENT_TIMESTAMP,
+    stop_id INTEGER,
+    category TEXT,
+    line_id INTEGER,
+    delay INTEGER,
+    FOREIGN KEY (stop_id) REFERENCES stop(id)
         ON DELETE SET NULL
         ON UPDATE CASCADE,
-    FOREIGN KEY (linia_id) REFERENCES Linia(id)
+    FOREIGN KEY (line_id) REFERENCES line(id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
 
 -- ================================================
--- Tabela: Main_view
+-- Tabela: main_view
 -- ================================================
-DROP TABLE IF EXISTS Main_view;
-CREATE TABLE IF NOT EXISTS Main_view (
+DROP TABLE IF EXISTS main_view;
+CREATE TABLE IF NOT EXISTS main_view (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    uzytkownik_id INTEGER,
-    odjazd_id INTEGER,
-    formularz_id INTEGER,
-    as_score INTEGER,
-    potwierdzone_przez_admina BOOLEAN DEFAULT 0,
+    user_id INTEGER,
+    departure_id INTEGER,
+    form_id INTEGER,
+    as_field TEXT,
+    confirmed_by_admin BOOLEAN DEFAULT 0,
     like_total INTEGER DEFAULT 0,
     dislike_total INTEGER DEFAULT 0,
-    FOREIGN KEY (uzytkownik_id) REFERENCES Uzytkownik(id)
+    FOREIGN KEY (user_id) REFERENCES user(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (odjazd_id) REFERENCES Odjazd(id)
+    FOREIGN KEY (departure_id) REFERENCES departure(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (formularz_id) REFERENCES Formularz(id)
+    FOREIGN KEY (form_id) REFERENCES form(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
