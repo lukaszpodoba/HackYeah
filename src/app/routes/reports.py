@@ -10,6 +10,15 @@ from datetime import datetime, timezone
 router = APIRouter()
 
 
+# Getting all forms
+@router.get("/forms/", response_model=List[FormResponse])
+def get_all_forms(db: Session = Depends(get_db)):
+    forms = db.query(Form).all()
+    if not forms:
+        raise HTTPException(status_code=404, detail="No forms found")
+    return forms
+
+
 # Getting all forms for specific user
 @router.get("/forms/user/{user_id}", response_model=List[FormResponse])
 def get_reports(user_id: int, db: Session = Depends(get_db)):
