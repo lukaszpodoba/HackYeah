@@ -1,0 +1,26 @@
+<section class="h-dvh flex flex-col overflow-hidden">
+  <header class="w-full flex gap-4 bg-grey-300 items-center p-4 shrink-0">
+    <section class="text-body-large-bold">Delays on Time</section>
+    <nav class="flex gap-2">
+      <a
+        routerLink="/feed"
+        class="p-2 py-1 rounded-xl border-2 border-gray-700"
+        routerLinkActive="bg-gray-300"
+      >
+        Mapa opóźnień
+      </a>
+      <a
+        routerLink="/form"
+        class="p-2 py-1 rounded-xl border-2 border-gray-700"
+        routerLinkActive="bg-gray-300"
+      >
+        Ulubione trasy
+      </a>
+    </nav>
+  </header>
+
+  <mat-divider class="shrink-0"></mat-divider>
+  <section class="w-full flex-1 min-h-0 overflow-auto">
+    <router-outlet />
+  </section>
+</section>
