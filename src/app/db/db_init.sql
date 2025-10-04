@@ -1,5 +1,5 @@
 -- ================================================
--- SQLite schema for hvckyeah.db (ORM-aligned)
+-- SQLite schema for hvckyeah.db (updated with as_history)
 -- ================================================
 
 PRAGMA foreign_keys = ON;
@@ -27,6 +27,19 @@ CREATE TABLE IF NOT EXISTS line (
 );
 
 -- ================================================
+-- Tabela: as_history
+-- ================================================
+DROP TABLE IF EXISTS as_history;
+CREATE TABLE IF NOT EXISTS as_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    as_field INTEGER,
+    user_id INTEGER,
+    FOREIGN KEY (user_id) REFERENCES user(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+-- ================================================
 -- Tabela: user
 -- ================================================
 DROP TABLE IF EXISTS user;
@@ -36,7 +49,6 @@ CREATE TABLE IF NOT EXISTS user (
     last_name TEXT NOT NULL,
     password TEXT NOT NULL,
     role TEXT,
-    as_field INTEGER,
     line_id INTEGER,
     FOREIGN KEY (line_id) REFERENCES line(id)
         ON DELETE SET NULL
@@ -91,7 +103,7 @@ CREATE TABLE IF NOT EXISTS main_view (
     user_id INTEGER,
     departure_id INTEGER,
     form_id INTEGER,
-    as_field TEXT,
+    as_field INTEGER,
     confirmed_by_admin BOOLEAN DEFAULT 0,
     like_total INTEGER DEFAULT 0,
     dislike_total INTEGER DEFAULT 0,

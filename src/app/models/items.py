@@ -34,11 +34,20 @@ class User(Base):
     last_name = Column(String)
     password = Column(String)
     role = Column(String)
-    as_field = Column(Integer)
     line_id = Column(Integer, ForeignKey('line.id'))
 
+    as_history = relationship("As_history", back_populates="user", cascade="all, delete-orphan")
     line = relationship("Line", back_populates="users")
     main_views = relationship("MainView", back_populates="user")
+
+
+class As_history(Base):
+    __tablename__ = 'as_history'
+    id = Column(Integer, primary_key=True)
+    as_field = Column(Integer)
+    user_id = Column(Integer, ForeignKey('user.id'))
+
+    user = relationship("User", back_populates="as_history")
 
 
 class Departure(Base):
