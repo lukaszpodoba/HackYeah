@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 # Getting all forms for specific user
-@router.get("/forms/{user_id}", response_model=List[FormResponse])
+@router.get("/forms/user/{user_id}", response_model=List[FormResponse])
 def get_reports(user_id: int, db: Session = Depends(get_db)):
     reports = db.query(Form).filter(Form.user_id == user_id).all()
     if not reports:
