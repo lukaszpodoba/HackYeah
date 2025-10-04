@@ -14,3 +14,18 @@ source .venv/bin/activate
 make format             # sformatuj i napraw proste problemy \
 make check              # lint \
 make test               # pytest
+
+## SQLite setup
+sudo apt install sqlite3                # Linux (Debian/Ubuntu)
+brew install sqlite                     # macOS
+https://www.sqlite.org/download.html    #windows
+
+### Uwtorz plik bazy
+sqlite3 src/db/hackyeah.db
+
+### Wczytaj schemat
+.read src/db/db_init.sql
+
+### Wczytaj dane
+.read src/db/seed_db.sql
+
