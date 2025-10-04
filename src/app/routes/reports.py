@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from src.app.db.dependencies import get_db
-from src.app.models.items import Form
+from src.app.models.items import Form, User, Departure, Stop, Line
 from src.app.schemas.form import FormCreate
 from src.app.schemas.form import FormResponse
 from datetime import datetime, timezone
@@ -34,6 +34,25 @@ def create_form(
     payload: FormCreate,
     db: Session = Depends(get_db)
 ):
+    user = db.query(User).filter(User.id == payload.user_id).first()
+    if not user:
+        raise HTTPException(status_code=400, detail="User not found")
+
+    departure = db.query(Departure).filter(Departure.id == payload.departure_id).first()
+    if not departure:
+        raise HTTPException(status_code=400, detail="Departure not found")
+
+    stop = db.query(Stop).filter(Stop.id == payload.stop_id).first()
+    if not stop:
+        raise HTTPException(status_code=400, detail="Stop not found")
+
+    line = db.query(Line).filter(Line.id == payload.line_id).first()
+    if not line:
+        raise HTTPException(status_code=400, detail="Line not found")
+
+    if payload.delay < 0:
+        raise HTTPException(status_code=400, detail="Delay cannot be negative")
+
     new_form = Form(
         user_id=payload.user_id,
         departure_id=payload.departure_id,
