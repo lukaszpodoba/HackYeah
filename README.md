@@ -29,3 +29,14 @@ sqlite3 src/db/hackyeah.db
 ### Wczytaj dane
 .read src/db/seed_db.sql
 
+### Lub wywolaj wszystko za jednym razem
+sqlite3 src/db/hackyeah.db ".read src/db/db_init.sql" ".read src/db/seed_db.sql"
+
+### Usun baze
+rm src/db/hackyeah.db   #macOS \
+del src\db\hackyeah.db  #Windows
+
+
+
+
+
