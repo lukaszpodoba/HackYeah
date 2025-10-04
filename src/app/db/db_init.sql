@@ -1,5 +1,5 @@
 -- ================================================
--- SQLite schema for hvckyeah.db (updated with as_history)
+-- SQLite schema for hvckyeah.db (Python ORM aligned)
 -- ================================================
 
 PRAGMA foreign_keys = ON;
@@ -27,19 +27,6 @@ CREATE TABLE IF NOT EXISTS line (
 );
 
 -- ================================================
--- Tabela: as_history
--- ================================================
-DROP TABLE IF EXISTS as_history;
-CREATE TABLE IF NOT EXISTS as_history (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    as_field INTEGER,
-    user_id INTEGER,
-    FOREIGN KEY (user_id) REFERENCES user(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
-
--- ================================================
 -- Tabela: user
 -- ================================================
 DROP TABLE IF EXISTS user;
@@ -52,6 +39,19 @@ CREATE TABLE IF NOT EXISTS user (
     line_id INTEGER,
     FOREIGN KEY (line_id) REFERENCES line(id)
         ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+-- ================================================
+-- Tabela: as_history
+-- ================================================
+DROP TABLE IF EXISTS as_history;
+CREATE TABLE IF NOT EXISTS as_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    as_user INTEGER,
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id)
+        ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
@@ -81,39 +81,27 @@ CREATE TABLE IF NOT EXISTS departure (
 DROP TABLE IF EXISTS form;
 CREATE TABLE IF NOT EXISTS form (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    departure_id INTEGER,
     report_time TEXT DEFAULT CURRENT_TIMESTAMP,
+    as_form INTEGER,
+    confirmed_by_admin BOOLEAN DEFAULT 0,
+    like_total INTEGER DEFAULT 0,
+    dislike_total INTEGER DEFAULT 0,
     stop_id INTEGER,
     category TEXT,
     line_id INTEGER,
     delay INTEGER,
-    FOREIGN KEY (stop_id) REFERENCES stop(id)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE,
-    FOREIGN KEY (line_id) REFERENCES line(id)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE
-);
-
--- ================================================
--- Tabela: main_view
--- ================================================
-DROP TABLE IF EXISTS main_view;
-CREATE TABLE IF NOT EXISTS main_view (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    departure_id INTEGER,
-    form_id INTEGER,
-    as_field INTEGER,
-    confirmed_by_admin BOOLEAN DEFAULT 0,
-    like_total INTEGER DEFAULT 0,
-    dislike_total INTEGER DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES user(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
     FOREIGN KEY (departure_id) REFERENCES departure(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (form_id) REFERENCES form(id)
-        ON DELETE CASCADE
+    FOREIGN KEY (stop_id) REFERENCES stop(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+    FOREIGN KEY (line_id) REFERENCES line(id)
+        ON DELETE SET NULL
         ON UPDATE CASCADE
 );
