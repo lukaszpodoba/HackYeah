@@ -29,7 +29,6 @@ dependencies = [
   "pydantic>=2.7",
   "python-dotenv>=1.0.1",
   "mysqlclient>=2.2.0",
-  "mysql-connector-python>=9.0.0",
 ]
 
 [project.optional-dependencies]
