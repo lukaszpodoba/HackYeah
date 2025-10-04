@@ -1,10 +1,11 @@
 from typing import List, Optional
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from src.app.db.dependencies import get_db
-from src.app.models.items import Form
+from src.app.models.items import Form, User, Departure, Stop, Line
 from src.app.schemas.form import FormCreate, FormResponse
 from src.app.services.scoring_db_core import (
     create_form_with_initial_score,
@@ -25,9 +26,37 @@ def get_reports(user_id: int, db: Session = Depends(get_db)):
     return reports
 
 
+@router.get("/forms/{form_id}", response_model=FormResponse)
+def get_single_report(form_id: int, db: Session = Depends(get_db)):
+    """Return a single report by ID."""
+    report = db.query(Form).filter(Form.id == form_id).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+    return report
+
+
 @router.post("", response_model=FormResponse)
 def create_report(payload: FormCreate, db: Session = Depends(get_db)):
     """Create report and compute initial authenticity (as_form)."""
+    user = db.query(User).filter(User.id == payload.user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    departure = db.query(Departure).filter(Departure.id == payload.departure_id).first()
+    if not departure:
+        raise HTTPException(status_code=404, detail="Departure not found")
+
+    stop = db.query(Stop).filter(Stop.id == payload.stop_id).first()
+    if not stop:
+        raise HTTPException(status_code=404, detail="Stop not found")
+
+    line = db.query(Line).filter(Line.id == payload.line_id).first()
+    if not line:
+        raise HTTPException(status_code=404, detail="Line not found")
+
+    if payload.delay < 0:
+        raise HTTPException(status_code=400, detail="Delay cannot be negative")
+
     try:
         form = create_form_with_initial_score(
             db,

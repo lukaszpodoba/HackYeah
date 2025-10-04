@@ -1,0 +1,26 @@
+<!-- feed-container.html -->
+<div class="flex-1 h-full flex">
+  <div id="map" class="w-full bg-grey-300"></div>
+
+  <div
+    id="side-panel"
+    class="hidden md:flex flex-col w-[min(500px,50%)] overflow-auto border-l border-l-[#ccc]"
+  >
+    <div class="p-4">
+      <h3 class="text-body-large-bold">Zgłoszenia</h3>
+      <p class="text-body-small">{{ state.reports().length }} nowych zgłoszeń</p>
+    </div>
+    <mat-divider></mat-divider>
+
+    <div id="report-list" class="overflow-auto p-2 flex flex-col gap-2">
+      @for (report of state.reports(); track report) {
+      <app-feed-card-component
+        [report]="report"
+        [attr.data-report-id]="report.id"
+        (cardClick)="onCardClicked(report)"
+        (vote)="onVote($event)"
+      />
+      }
+    </div>
+  </div>
+</div>
