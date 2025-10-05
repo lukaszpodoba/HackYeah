@@ -18,8 +18,16 @@ router = APIRouter()
 
 # Getting all forms
 @router.get("/forms/", response_model=List[FormResponse])
-def get_all_forms(db: Session = Depends(get_db)):
-    forms = db.query(Form).all()
+def get_all_forms(
+    db: Session = Depends(get_db),
+    limit: int = 100,
+    offset: int = 0,
+):
+    # Enforce a reasonable maximum limit
+    max_limit = 1000
+    if limit > max_limit:
+        limit = max_limit
+    forms = db.query(Form).offset(offset).limit(limit).all()
     return forms
 
 
