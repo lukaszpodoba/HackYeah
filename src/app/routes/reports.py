@@ -8,7 +8,7 @@ from src.app.db.dependencies import get_db
 from src.app.services.email_service import send_email
 from fastapi import BackgroundTasks
 from src.app.models.items import Form, User, Departure, Stop, Line, user_line
-from src.app.schemas.form import FormCreate, FormResponse, GroupedFormsResponse
+from src.app.schemas.form import FormCreate, FormResponse, GroupedFormsResponse, StopBase
 from src.app.services.scoring_db_core import (
     create_form_with_initial_score,
     refresh_form_score,
@@ -44,6 +44,15 @@ def get_user_lines_reports(user_id: int, db: Session = Depends(get_db)):
         forms_response = [FormResponse.model_validate(form) for form in forms_sorted]
         result.append(GroupedFormsResponse(line_id=line_id, forms=forms_response))
     return result
+
+
+@router.get("/stops", response_model=List[StopBase])
+def get_all_stops(db: Session = Depends(get_db), limit: int = 100, offset: int = 0):
+    max_limit = 1000
+    if limit > max_limit:
+        limit = max_limit
+    stops = db.query(Stop).offset(offset).limit(limit).all()
+    return [StopBase.model_validate(stop) for stop in stops]  # Pydantic v2
 
 
 # Getting all forms
