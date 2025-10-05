@@ -6,6 +6,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/auth/auth.routes').then((r) => r.AUTH_ROUTES),
   },
   {
+    path: 'favorites',
+    loadChildren: () =>
+      import('./features/favourites/favorite.routes').then((r) => r.FAVORITE_ROUTES),
+  },
+  {
     path: 'feed',
     loadChildren: () => import('./features/feed/feed.routes').then((r) => r.FEED_ROUTES),
   },
