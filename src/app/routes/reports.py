@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from src.app.db.dependencies import get_db
 from src.app.models.items import Form, User, Departure, Stop, Line
@@ -31,11 +31,20 @@ def get_all_forms(
     return forms
 
 
+@router.get("/forms/", response_model=List[FormResponse])
+def get_all_forms(db: Session = Depends(get_db), limit: int = 100, offset: int = 0):
+    max_limit = 1000
+    if limit > max_limit:
+        limit = max_limit
+    forms = db.query(Form).options(joinedload(Form.stop)).offset(offset).limit(limit).all()
+    return forms
+
+
 # Getting all forms for specific user
 @router.get("/forms/user/{user_id}", response_model=List[FormResponse])
 def get_reports(user_id: int, db: Session = Depends(get_db)):
     """List user's reports (Form rows)."""
-    reports = db.query(Form).filter(Form.user_id == user_id).all()
+    reports = db.query(Form).options(joinedload(Form.stop)).filter(Form.user_id == user_id).all()
     if not reports:
         raise HTTPException(status_code=404, detail="Reports not found for this user")
     return reports
