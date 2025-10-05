@@ -134,4 +134,29 @@ INSERT INTO form (
 -- zgłoszenie na SKA5, Lotnisko (stop_id=1), departure_id=1, line_id=5
 (8, 1, '2025-10-04 10:05:00', 15, 1, 5, 0, 1, 'Opóźnienie przy odjeździe', 5, 4, 0),
 -- zgłoszenie na SKA4, Kraków Główny (stop_id=7), departure_id=4, line_id=4
-(9, 4, '2025-10-04 10:45:00', 22, 1, 7, 1, 7, 'Tłok przy przesiadce', 4, 2, 0);
+(9, 4, '2025-10-04 10:45:00', 22, 1, 7, 1, 7, 'Tłok przy przesiadce', 4, 2, 0),
+
+-- Dodatkowe zgłoszenia dla SKA5 (user_id=8 i 10 mają przypisaną linię 5)
+(10, 2, '2025-10-04 10:20:00', 8, 0, 12, 2, 6, 'Opóźnienie z powodu awarii', 5, 8, 0),
+(8, 3, '2025-10-04 10:30:00', 18, 1, 15, 1, 7, 'Problemy z drzwiami', 5, 6, 0),
+
+-- Dodatkowe zgłoszenia dla SKA4 (user_id=9 ma przypisaną linię 4)
+(9, 5, '2025-10-04 11:10:00', 12, 0, 8, 3, 17, 'Opóźnienie techniczne', 4, 5, 0),
+(9, 6, '2025-10-04 11:40:00', 25, 1, 20, 0, 26, 'Długie oczekiwanie na stacji', 4, 12, 0),
+
+-- Zgłoszenia dla SKA1 (user_id=1, 4, 5 mają przypisaną linię 1)
+(9, 1, '2025-10-04 09:15:00', 30, 1, 25, 2, 1, 'Awaria klimatyzacji', 1, 10, 1),
+(9, 2, '2025-10-04 09:30:00', 5, 0, 6, 8, 6, 'Nieznaczne opóźnienie', 1, 3, 0),
+(9, 3, '2025-10-04 09:45:00', 14, 0, 11, 4, 7, 'Tłok w godzinach szczytu', 1, 2, 0),
+
+-- Zgłoszenia dla SKA2 (user_id=2, 7 mają przypisaną linię 2)
+(2, 4, '2025-10-04 08:20:00', 19, 1, 18, 1, 7, 'Opóźnienie przez ruch', 2, 7, 0),
+(7, 5, '2025-10-04 08:45:00', 9, 0, 5, 6, 17, 'Problemy z sygnalizacją', 2, 4, 0),
+
+-- Zgłoszenia dla SKA3 (user_id=3, 6 mają przypisaną linię 3)
+(3, 6, '2025-10-04 12:15:00', 16, 0, 13, 3, 26, 'Opóźnienie przy odjeździe', 3, 9, 0),
+(6, 1, '2025-10-04 12:30:00', 7, 0, 4, 5, 1, 'Drobne problemy techniczne', 3, 2, 0),
+
+-- Dodatkowe zgłoszenia od admina (user_id=1)
+(1, 2, '2025-10-04 13:00:00', 21, 1, 30, 0, 6, 'Kontrola jakości usług', 5, 1, 1),
+(1, 4, '2025-10-04 13:15:00', 28, 1, 35, 1, 7, 'Inspekcja bezpieczeństwa', 4, 0, 1);

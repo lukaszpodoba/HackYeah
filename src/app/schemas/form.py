@@ -10,6 +10,7 @@ class FormCreate(BaseModel):
     category: str
     line_id: int
     delay: int
+    model_config = ConfigDict(from_attributes=True)
 
 
 class StopBase(BaseModel):
@@ -18,11 +19,7 @@ class StopBase(BaseModel):
     stop_name: str
     latitude: Optional[float] = None
     longitude: Optional[float] = None
-
-    class Config:
-        orm_mode = True
-
-
+    model_config = ConfigDict(from_attributes=True)
 
 
 class FormResponse(BaseModel):
@@ -39,20 +36,33 @@ class FormResponse(BaseModel):
     category: Optional[str] = None
     line_id: Optional[int] = None
     delay: Optional[int] = None
-    confirmed_by_admin: Optional[bool] = None
     is_email_sent: Optional[bool] = None
     stop: Optional[StopBase] = None
+
+
+class GroupedFormsResponse(BaseModel):
+    line_id: int
+    forms: List[FormResponse]
+    model_config = ConfigDict(from_attributes=True)
+
 
 class RouteStop(BaseModel):
     stop_code: int
     stop_name: str
     line_id_change_here: Optional[int] = None
+    model_config = ConfigDict(from_attributes=True)
+
+
 class RouteSegment(BaseModel):
     line_id: int
     start_stop_code: int
     end_stop_code: int
     distance_km: Optional[float] = None
+    model_config = ConfigDict(from_attributes=True)
+
+
 class RouteResponse(BaseModel):
     total_cost_km: Optional[float]
     stops: list[RouteStop]
     segments: list[RouteSegment]
+    model_config = ConfigDict(from_attributes=True)
