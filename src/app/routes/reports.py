@@ -101,8 +101,10 @@ def increment_like(id: int, background_tasks: BackgroundTasks, db: Session = Dep
     try:
         form = apply_like_dislike(db, form_id=id, like_delta=1)
 
-        if form.as_form and form.as_form > 10:
-            users = db.query(User).filter(User.line_id == form.line_id).all()
+        if form.as_form > 1:
+            users = db.query(User)\
+                .join(User.lines)\
+                .filter(Line.id == form.line_id).all()
 
             subject = f"🚨 Wysoki wskaźnik AS na linii {form.line_id}"
             body = f"""
