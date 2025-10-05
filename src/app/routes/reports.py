@@ -4,6 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 
 from src.app.db.dependencies import get_db
+from src.app.services.email_service import send_email
+from fastapi import BackgroundTasks
 from src.app.models.items import Form, User, Departure, Stop, Line
 from src.app.schemas.form import FormCreate, FormResponse
 from src.app.services.scoring_db_core import (
@@ -13,27 +15,13 @@ from src.app.services.scoring_db_core import (
     daily_update_user_as,
 )
 
-from HackYeah.src.app.schemas.form import RouteResponse
-from HackYeah.src.app.services.route_service import find_route
+from src.app.schemas.form import RouteResponse
+from src.app.services.route_service import find_route
 
 router = APIRouter()
 
 
 # Getting all forms
-@router.get("/forms/", response_model=List[FormResponse])
-def get_all_forms(
-    db: Session = Depends(get_db),
-    limit: int = 100,
-    offset: int = 0,
-):
-    # Enforce a reasonable maximum limit
-    max_limit = 1000
-    if limit > max_limit:
-        limit = max_limit
-    forms = db.query(Form).offset(offset).limit(limit).all()
-    return forms
-
-
 @router.get("/forms/", response_model=List[FormResponse])
 def get_all_forms(db: Session = Depends(get_db), limit: int = 100, offset: int = 0):
     max_limit = 1000
@@ -63,7 +51,9 @@ def get_single_report(form_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=FormResponse)
-def create_report(payload: FormCreate, db: Session = Depends(get_db)):
+def create_report(
+    payload: FormCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)
+):
     """Create report and compute initial authenticity (as_form)."""
     user = db.query(User).filter(User.id == payload.user_id).first()
     if not user:
@@ -84,6 +74,8 @@ def create_report(payload: FormCreate, db: Session = Depends(get_db)):
     if payload.delay < 0:
         raise HTTPException(status_code=400, detail="Delay cannot be negative")
 
+    is_admin = user.role == "admin"
+
     try:
         form = create_form_with_initial_score(
             db,
@@ -94,18 +86,31 @@ def create_report(payload: FormCreate, db: Session = Depends(get_db)):
             category=payload.category,
             reported_delay_min=payload.delay,
             official_delay_min=None,
-            confirmed_by_admin=False,
+            confirmed_by_admin=is_admin,
         )
+        db.commit()
+        db.refresh(form)
+
+        if is_admin and form.confirmed_by_admin and form.as_form > 1 and not form.is_email_sent:
+            send_as_notification(form, db, background_tasks)
+            db.commit()
+            db.refresh(form)
+
         return form
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.put("/{id}/like", response_model=FormResponse)
-def increment_like(id: int, db: Session = Depends(get_db)):
-    """+1 like and refresh authenticity."""
+def increment_like(id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     try:
         form = apply_like_dislike(db, form_id=id, like_delta=1)
+
+        if not form.is_email_sent and (form.as_form > 1 or not form.confirmed_by_admin):
+            send_as_notification(form, db, background_tasks)
+            db.commit()
+            db.refresh(form)
+
         return form
     except ValueError:
         raise HTTPException(status_code=404, detail="Report not found")
@@ -122,11 +127,14 @@ def increment_dislike(id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}/accept", response_model=FormResponse)
-def accept_report(id: int, db: Session = Depends(get_db)):
+def accept_report(id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     form = db.get(Form, id)
     if not form:
         raise HTTPException(status_code=404, detail="Report not found")
     form.confirmed_by_admin = True
+    if not form.is_email_sent and form.as_form > 1:
+        send_as_notification(form, db, background_tasks)
+
     db.commit()
     db.refresh(form)
     return form
@@ -163,6 +171,7 @@ def user_as_daily(
     except ValueError:
         raise HTTPException(status_code=404, detail="User not found")
 
+
 @router.get("/route/{start_stop_code}/{end_stop_code}", response_model=RouteResponse)
 def get_route_by_codes(
     start_stop_code: int,
@@ -181,3 +190,24 @@ def get_route_by_codes(
     if resp.total_cost_km is None and not resp.stops:
         raise HTTPException(status_code=404, detail="Route not found")
     return resp
+
+
+def send_as_notification(form, db, background_tasks):
+    users = db.query(User).join(User.lines).filter(Line.id == form.line_id).all()
+
+    subject = f"🚨 Wysoki wskaźnik AS na linii {form.line_id}"
+    body = f"""
+    <h3>Uwaga!</h3>
+    <p>W formularzu o ID <b>{form.id}</b> wystąpił wysoki wskaźnik AS.</p>
+    <p><b>Kategoria:</b> {form.category}</p>
+    <p><b>AS:</b> {form.as_form}</p>
+    <p><b>Linia:</b> {form.line_id}</p>
+    <p><b>Opóźnienie:</b> {form.delay} minut</p>
+    <br>
+    <small>System HackYeah Rail App 🚆</small>
+    """
+
+    for user in users:
+        if hasattr(user, "email") and user.email:
+            background_tasks.add_task(send_email, subject, [user.email], body)
+    form.is_email_sent = True

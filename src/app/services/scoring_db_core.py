@@ -47,7 +47,9 @@ def freshness_factor(created_ts: int) -> float:
     return max(0.0, 1.0 - (age_s / 3600.0))
 
 
-def initial_authenticity_score(reported_delay_min: float, official_delay_min: Optional[float]) -> float:
+def initial_authenticity_score(
+    reported_delay_min: float, official_delay_min: Optional[float]
+) -> float:
     """Compute initial authenticity: 0.5*rt + 0.3*0 + 0.2*1."""
     rt = rt_match_from_delays(reported_delay_min, official_delay_min)
     base = RT_W * rt + CONFIRM_W * 0.0 + FRESH_W * 1.0
@@ -89,14 +91,18 @@ def create_form_with_initial_score(
         dislike_total=0,
         delay=reported_delay_min,
     )
-    form.as_form = int(round(initial_authenticity_score(reported_delay_min, official_delay_min) * 100))
+    form.as_form = int(
+        round(initial_authenticity_score(reported_delay_min, official_delay_min) * 100)
+    )
     session.add(form)
     session.commit()
     session.refresh(form)
     return form
 
 
-def refresh_form_score(session: Session, *, form_id: int, official_delay_min: Optional[int] = None) -> Form:
+def refresh_form_score(
+    session: Session, *, form_id: int, official_delay_min: Optional[int] = None
+) -> Form:
     """Recompute as_form using confirmations, freshness, and time-decay."""
     form = session.get(Form, form_id)
     if not form:
@@ -115,7 +121,9 @@ def refresh_form_score(session: Session, *, form_id: int, official_delay_min: Op
     return form
 
 
-def apply_like_dislike(session: Session, *, form_id: int, like_delta: int = 0, dislike_delta: int = 0) -> Form:
+def apply_like_dislike(
+    session: Session, *, form_id: int, like_delta: int = 0, dislike_delta: int = 0
+) -> Form:
     """Adjust like/dislike counters and refresh authenticity."""
     form = session.get(Form, form_id)
     if not form:

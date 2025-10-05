@@ -58,17 +58,20 @@ INSERT INTO stop (stop_code, stop_name, latitude, longitude) VALUES
 -- ================================================
 -- user (bez line_id)
 -- ================================================
+-- ================================================
+-- user (tylko 'admin' lub 'user' jako role!)
+-- ================================================
 INSERT INTO "user" (first_name, last_name, password, role, email) VALUES
 ('Marta', 'Nowak', 'admin123', 'admin', 'martademianiuk7@gmail.com'),
-('Paweł', 'Wiśniewski', 'pass123', 'maszynista', 's27735@gpjwstk.edu.pl'),
-('Katarzyna', 'Szymańska', 'pass123', 'dyżurny ruchu', 's27471@pjwstk.edu.pl'),
-('Tomasz', 'Król', 'pass123', 'uzytkownik', 's27478@pjwstk.edu.pl'),
-('Agnieszka', 'Mazur', 'pass123', 'uzytkownik', 'agnieszka@gmail.com'),
-('Michał', 'Kowalczyk', 'pass123', 'uzytkownik', 'michal@gmail.com'),
-('Dominika', 'Duda', 'pass123', 'moderator', 'diminika@gmail.com'),
-('Jan', 'Nowicki', 'pass123', 'uzytkownik', 'jan@gmail.com'),
-('Ewelina', 'Krawczyk', 'pass123', 'uzytkownik', 'ewelina@gmail.com'),
-('Piotr', 'Baran', 'pass123', 'uzytkownik', 'piotr@gmail.com');
+('Paweł', 'Wiśniewski', 'pass123', 'user', 's27735@pjwstk.edu.pl'),
+('Katarzyna', 'Szymańska', 'pass123', 'user', 's27471@pjwstk.edu.pl'),
+('Tomasz', 'Król', 'pass123', 'user', 's27478@pjwstk.edu.pl'),
+('Agnieszka', 'Mazur', 'pass123', 'user', 'agnieszka@gmail.com'),
+('Michał', 'Kowalczyk', 'pass123', 'user', 'michal@gmail.com'),
+('Dominika', 'Duda', 'pass123', 'user', 'diminika@gmail.com'),
+('Jan', 'Nowicki', 'pass123', 'user', 'jan@gmail.com'),
+('Ewelina', 'Krawczyk', 'pass123', 'user', 'ewelina@gmail.com'),
+('Piotr', 'Baran', 'pass123', 'user', 'piotr@gmail.com');
 
 -- ================================================
 -- user_line (relacja wiele-do-wielu)
