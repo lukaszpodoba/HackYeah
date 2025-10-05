@@ -31,6 +31,7 @@ class User(Base):
     last_name = Column(String)
     password = Column(String)
     role = Column(String)
+    email = Column(String)
     as_history = relationship("As_history", back_populates="user", cascade="all, delete-orphan")
     forms = relationship("Form", back_populates="user")
     lines = relationship("Line", secondary=user_line, back_populates="users")
@@ -84,6 +85,7 @@ class Form(Base):
     category = Column(String)
     line_id = Column(Integer, ForeignKey('line.id'))
     delay = Column(Integer)
+    is_email_sent = Column(Boolean)
 
     user = relationship("User", back_populates="forms")
     departure = relationship("Departure", back_populates="forms")

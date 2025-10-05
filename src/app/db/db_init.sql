@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS user (
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     password TEXT NOT NULL,
-    role TEXT
+    role TEXT,
+    email TEXT
 );
 -- UWAGA: brak kolumny line_id
 
@@ -101,6 +102,7 @@ CREATE TABLE IF NOT EXISTS form (
     category TEXT,
     line_id INTEGER,
     delay INTEGER,
+    is_email_sent BOOLEAN,
     FOREIGN KEY (user_id) REFERENCES user(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
