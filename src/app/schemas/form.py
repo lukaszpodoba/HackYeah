@@ -28,8 +28,8 @@ class FormResponse(BaseModel):
     user_id: int
     departure_id: int
     report_time: Optional[datetime] = None
-    as_form: Optional[int] = None
     confirmed_by_admin: Optional[bool] = None
+    as_form: Optional[int] = None
     like_total: Optional[int] = None
     dislike_total: Optional[int] = None
     stop_id: Optional[int] = None
