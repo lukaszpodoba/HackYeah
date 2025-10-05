@@ -3,6 +3,15 @@ from typing import Optional, List
 from pydantic import BaseModel, ConfigDict
 
 
+class StopBase(BaseModel):
+    id: int
+    stop_code: int
+    stop_name: str
+    latitude: Optional[float]
+    longitude: Optional[float]
+    model_config = ConfigDict(from_attributes=True)
+
+
 class FormCreate(BaseModel):
     user_id: int
     departure_id: int
