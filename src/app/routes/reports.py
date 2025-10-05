@@ -101,7 +101,7 @@ def increment_like(id: int, background_tasks: BackgroundTasks, db: Session = Dep
     try:
         form = apply_like_dislike(db, form_id=id, like_delta=1)
 
-        if form.as_form > 1:
+        if not form.is_email_sent and (form.as_form > 1 or not form.confirmed_by_admin):
             users = db.query(User)\
                 .join(User.lines)\
                 .filter(Line.id == form.line_id).all()
@@ -122,6 +122,10 @@ def increment_like(id: int, background_tasks: BackgroundTasks, db: Session = Dep
                 if hasattr(user, "email") and user.email:
                     background_tasks.add_task(send_email, subject, [user.email], body)
 
+            form.is_email_sent = True
+            db.commit()
+            db.refresh(form)
+
 
         return form
     except ValueError:
@@ -139,11 +143,34 @@ def increment_dislike(id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}/accept", response_model=FormResponse)
-def accept_report(id: int, db: Session = Depends(get_db)):
+def accept_report(id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     form = db.get(Form, id)
     if not form:
         raise HTTPException(status_code=404, detail="Report not found")
     form.confirmed_by_admin = True
+    if not form.is_email_sent and form.as_form > 1:
+            users = db.query(User)\
+                .join(User.lines)\
+                .filter(Line.id == form.line_id).all()
+
+            subject = f"🚨 Wysoki wskaźnik AS na linii {form.line_id}"
+            body = f"""
+            <h3>Uwaga!</h3>
+            <p>W formularzu o ID <b>{form.id}</b> wystąpił wysoki wskaźnik AS.</p>
+            <p><b>Kategoria:</b> {form.category}</p>
+            <p><b>AS:</b> {form.as_form}</p>
+            <p><b>Linia:</b> {form.line_id}</p>
+            <p><b>Opóźnienie:</b> {form.delay} minut</p>
+            <br>
+            <small>System HackYeah Rail App 🚆</small>
+            """
+
+            for user in users:
+                if hasattr(user, "email") and user.email:
+                    background_tasks.add_task(send_email, subject, [user.email], body)
+
+            form.is_email_sent = True
+            
     db.commit()
     db.refresh(form)
     return form

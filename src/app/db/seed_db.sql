@@ -58,7 +58,7 @@ INSERT INTO stop (stop_code, stop_name, latitude, longitude) VALUES
 -- ================================================
 INSERT INTO "user" (first_name, last_name, password, role, email) VALUES
 ('Marta', 'Nowak', 'admin123', 'admin', 'martademianiuk7@gmail.com'),
-('Paweł', 'Wiśniewski', 'pass123', 'maszynista', 's27735@gpjwstk.edu.pl'),
+('Paweł', 'Wiśniewski', 'pass123', 'maszynista', 's27735@pjwstk.edu.pl'),
 ('Katarzyna', 'Szymańska', 'pass123', 'dyżurny ruchu', 's27471@pjwstk.edu.pl'),
 ('Tomasz', 'Król', 'pass123', 'uzytkownik', 's27478@pjwstk.edu.pl'),
 ('Agnieszka', 'Mazur', 'pass123', 'uzytkownik', 'agnieszka@gmail.com'),
@@ -121,8 +121,8 @@ INSERT INTO form (
 user_id, departure_id, report_time, as_form, confirmed_by_admin, like_total, dislike_total,
 stop_id, category, line_id, delay, is_email_sent
 ) VALUES
-(1, 1, '2025-10-04 06:40:00', 12, 1, 130, 5, 10, 'Opóźnienie pociągu', 1, 8, FALSE),
-(2, 2, '2025-10-04 07:25:00', 7, 0, 75, 10, 9, 'Awaria sygnalizacji', 2, 15, FALSE),
-(3, 3, '2025-10-04 08:10:00', 22, 1, 98, 4, 7, 'Utrudnienia techniczne', 3, 5, FALSE),
-(4, 4, '2025-10-04 09:10:00', 9, 0, 34, 3, 6, 'Zmiana toru odjazdu', 4, 3, FALSE),
-(5, 5, '2025-10-04 10:20:00', 18, 1, 210, 2, 7, 'Opóźnienie przez mgłę', 5, 12, FALSE);
+(1, 1, '2025-10-05 02:40:00', 12, 0, 130, 5, 10, 'Opóźnienie pociągu', 1, 8, FALSE),
+(2, 2, '2025-10-05 03:25:00', 7, 0, 75, 10, 9, 'Awaria sygnalizacji', 2, 15, FALSE),
+(3, 3, '2025-10-05 04:10:00', 22, 0, 98, 4, 7, 'Utrudnienia techniczne', 3, 5, FALSE),
+(4, 4, '2025-10-05 05:10:00', 9, 0, 34, 3, 6, 'Zmiana toru odjazdu', 4, 3, FALSE),
+(5, 5, '2025-10-05 06:00:00', 18, 0, 210, 2, 7, 'Opóźnienie przez mgłę', 5, 12, FALSE);
