@@ -46,7 +46,6 @@ class Line(Base):
     users = relationship("User", secondary=user_line, back_populates="lines")
 
 
-
 class As_history(Base):
     __tablename__ = 'as_history'
     id = Column(Integer, primary_key=True)
