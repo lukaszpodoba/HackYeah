@@ -15,21 +15,19 @@ from src.app.services.scoring_db_core import (
     daily_update_user_as,
 )
 
+from src.app.schemas.form import RouteResponse
+from src.app.services.route_service import find_route
+
 router = APIRouter()
 
 
 # Getting all forms
 @router.get("/forms/", response_model=List[FormResponse])
-def get_all_forms(
-    db: Session = Depends(get_db),
-    limit: int = 100,
-    offset: int = 0,
-):
-    # Enforce a reasonable maximum limit
+def get_all_forms(db: Session = Depends(get_db), limit: int = 100, offset: int = 0):
     max_limit = 1000
     if limit > max_limit:
         limit = max_limit
-    forms = db.query(Form).offset(offset).limit(limit).all()
+    forms = db.query(Form).options(joinedload(Form.stop)).offset(offset).limit(limit).all()
     return forms
 
 
@@ -172,6 +170,26 @@ def user_as_daily(
         return {"user_id": user_id, "stored_as_value": val}
     except ValueError:
         raise HTTPException(status_code=404, detail="User not found")
+
+
+@router.get("/route/{start_stop_code}/{end_stop_code}", response_model=RouteResponse)
+def get_route_by_codes(
+    start_stop_code: int,
+    end_stop_code: int,
+    db: Session = Depends(get_db),
+):
+
+    TRANSFER_PENALTY_KM = 2.0
+
+    resp = find_route(
+        session=db,
+        start_stop_code=start_stop_code,
+        end_stop_code=end_stop_code,
+        transfer_penalty_km=TRANSFER_PENALTY_KM,
+    )
+    if resp.total_cost_km is None and not resp.stops:
+        raise HTTPException(status_code=404, detail="Route not found")
+    return resp
 
 
 def send_as_notification(form, db, background_tasks):

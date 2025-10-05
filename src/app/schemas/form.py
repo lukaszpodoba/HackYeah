@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, ConfigDict
 
 
@@ -23,6 +23,8 @@ class StopBase(BaseModel):
         orm_mode = True
 
 
+
+
 class FormResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
@@ -40,3 +42,17 @@ class FormResponse(BaseModel):
     confirmed_by_admin: Optional[bool] = None
     is_email_sent: Optional[bool] = None
     stop: Optional[StopBase] = None
+
+class RouteStop(BaseModel):
+    stop_code: int
+    stop_name: str
+    line_id_change_here: Optional[int] = None
+class RouteSegment(BaseModel):
+    line_id: int
+    start_stop_code: int
+    end_stop_code: int
+    distance_km: Optional[float] = None
+class RouteResponse(BaseModel):
+    total_cost_km: Optional[float]
+    stops: list[RouteStop]
+    segments: list[RouteSegment]
