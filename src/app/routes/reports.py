@@ -6,6 +6,8 @@ from src.app.models.items import Form
 from src.app.schemas.form import FormCreate
 from src.app.schemas.form import FormResponse
 from datetime import datetime, timezone
+from src.app.services.email_service import send_email
+from fastapi import BackgroundTasks
 
 router = APIRouter()
 
@@ -80,4 +82,16 @@ def increment_dislike(id: int, db: Session = Depends(get_db)):
     db.refresh(db_report)
     return db_report
 
-
+# send email
+@router.post("/send_email")
+async def send_email_endpoint(background_tasks: BackgroundTasks):
+    subject = "Dziękujemy za zgłoszenie"
+    body = """
+        <h3>Cześć Marta,</h3>
+        <p>Dziękujemy za przesłanie formularza.</p>
+        <p>Twój formularz został zapisany w systemie i oczekuje na weryfikację.</p>
+        <br>
+        <small>Zespół HackYeah Rail App 🚆</small>
+    """
+    background_tasks.add_task(send_email, subject, ["martademianiuk7@gmail.com"], body)
+    return {"message": "Email został wysłany w tle"}
