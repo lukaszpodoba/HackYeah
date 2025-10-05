@@ -1,15 +1,22 @@
 from fastapi import FastAPI
-from src.app.routes import reports  # przykładowy router
 from fastapi.middleware.cors import CORSMiddleware
+from src.app.routes import reports  # lub inne Twoje routery
 
 app = FastAPI()
 
+# 👇 pozwól na połączenie z frontendu Angulara
+origins = [
+    "http://localhost:4200",   # Angular dev server
+    "http://127.0.0.1:4200",   # alternatywny adres
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[""],  # Or ["http://localhost:4200/"] for stricter control
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=[""],
-    allow_headers=["*"],
+    allow_methods=["*"],  # GET, POST, PUT, DELETE, OPTIONS
+    allow_headers=["*"],  # np. Content-Type, Authorization itd.
 )
 
-app.include_router(reports.router, prefix="/reports", tags=["forms"])
+# ✅ zarejestruj router
+app.include_router(reports.router)
