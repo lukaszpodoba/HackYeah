@@ -1,12 +1,8 @@
--- ================================================
--- SQLite schema for hvckyeah.db (Python ORM aligned)
--- ================================================
-
 PRAGMA foreign_keys = ON;
 
--- ================================================
+-- =========================
 -- Tabela: stop
--- ================================================
+-- =========================
 DROP TABLE IF EXISTS stop;
 CREATE TABLE IF NOT EXISTS stop (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -16,9 +12,9 @@ CREATE TABLE IF NOT EXISTS stop (
     longitude REAL
 );
 
--- ================================================
+-- =========================
 -- Tabela: line
--- ================================================
+-- =========================
 DROP TABLE IF EXISTS line;
 CREATE TABLE IF NOT EXISTS line (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,25 +22,38 @@ CREATE TABLE IF NOT EXISTS line (
     long_name TEXT
 );
 
--- ================================================
+-- =========================
 -- Tabela: user
--- ================================================
+-- =========================
 DROP TABLE IF EXISTS user;
 CREATE TABLE IF NOT EXISTS user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     password TEXT NOT NULL,
-    role TEXT,
-    line_id INTEGER,
+    role TEXT
+);
+-- UWAGA: brak kolumny line_id
+
+-- =========================
+-- Tabela: user_line (many-to-many)
+-- =========================
+DROP TABLE IF EXISTS user_line;
+CREATE TABLE IF NOT EXISTS user_line (
+    user_id INTEGER NOT NULL,
+    line_id INTEGER NOT NULL,
+    PRIMARY KEY (user_id, line_id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
     FOREIGN KEY (line_id) REFERENCES line(id)
-        ON DELETE SET NULL
+        ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
--- ================================================
+-- =========================
 -- Tabela: as_history
--- ================================================
+-- =========================
 DROP TABLE IF EXISTS as_history;
 CREATE TABLE IF NOT EXISTS as_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,9 +64,9 @@ CREATE TABLE IF NOT EXISTS as_history (
         ON UPDATE CASCADE
 );
 
--- ================================================
+-- =========================
 -- Tabela: departure
--- ================================================
+-- =========================
 DROP TABLE IF EXISTS departure;
 CREATE TABLE IF NOT EXISTS departure (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,9 +84,9 @@ CREATE TABLE IF NOT EXISTS departure (
         ON UPDATE CASCADE
 );
 
--- ================================================
+-- =========================
 -- Tabela: form
--- ================================================
+-- =========================
 DROP TABLE IF EXISTS form;
 CREATE TABLE IF NOT EXISTS form (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime, Table
 from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
@@ -16,15 +16,12 @@ class Stop(Base):
     departures = relationship("Departure", back_populates="stop")
 
 
-class Line(Base):
-    __tablename__ = 'line'
-    id = Column(Integer, primary_key=True)
-    short_name = Column(String)
-    long_name = Column(String)
-
-    departures = relationship("Departure", back_populates="line")
-    forms = relationship("Form", back_populates="line")
-    users = relationship("User", back_populates="line")
+user_line = Table(
+    'user_line',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
+    Column('line_id', Integer, ForeignKey('line.id'), primary_key=True)
+)
 
 
 class User(Base):
@@ -34,11 +31,20 @@ class User(Base):
     last_name = Column(String)
     password = Column(String)
     role = Column(String)
-    line_id = Column(Integer, ForeignKey('line.id'))
-
     as_history = relationship("As_history", back_populates="user", cascade="all, delete-orphan")
-    line = relationship("Line", back_populates="users")
     forms = relationship("Form", back_populates="user")
+    lines = relationship("Line", secondary=user_line, back_populates="users")
+
+
+class Line(Base):
+    __tablename__ = 'line'
+    id = Column(Integer, primary_key=True)
+    short_name = Column(String)
+    long_name = Column(String)
+    departures = relationship("Departure", back_populates="line")
+    forms = relationship("Form", back_populates="line")
+    users = relationship("User", secondary=user_line, back_populates="lines")
+
 
 
 class As_history(Base):
