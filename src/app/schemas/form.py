@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
+from pydantic import BaseModel, ConfigDict
 
 
 class FormCreate(BaseModel):
@@ -10,21 +11,17 @@ class FormCreate(BaseModel):
     line_id: int
     delay: int
 
-
 class FormResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     user_id: int
     departure_id: int
-    report_time: datetime
-    as_form: int
-    confirmed_by_admin: bool
-    like_total: int
-    dislike_total: int
-    stop_id: int
-    category: str
-    line_id: int
-    delay: int
-
-    class Config:
-        orm_mode = True
-
+    report_time: Optional[datetime] = None
+    as_form: Optional[int] = None
+    confirmed_by_admin: Optional[bool] = None
+    like_total: Optional[int] = None
+    dislike_total: Optional[int] = None
+    stop_id: Optional[int] = None
+    category: Optional[str] = None
+    line_id: Optional[int] = None
+    delay: Optional[int] = None
