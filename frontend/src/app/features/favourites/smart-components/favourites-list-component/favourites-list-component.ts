@@ -1,5 +1,5 @@
 // favorites-routes.component.ts
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,12 +8,8 @@ import { ID } from '../../../../core/models/util.model';
 import { FeedCardComponent } from '../../../feed/dumb-components/feed-card-component/feed-card-component';
 import { TReport } from '../../../feed/model/feed.model';
 import { FavoriteLineSummary, FavoritesService } from '../../services/favorites-service';
-
-type LineView = FavoriteLineSummary & {
-  expanded?: boolean;
-  loading?: boolean;
-  reports?: TReport[];
-};
+import { tap } from 'rxjs';
+import { FeedStateService } from '../../../feed/service/feed-state-service';
 
 @Component({
   selector: 'app-favorites-routes',
@@ -28,48 +24,26 @@ type LineView = FavoriteLineSummary & {
   templateUrl: './favourites-list-component.html',
 })
 export class FavoritesRoutesComponent implements OnInit {
-  lines = signal<LineView[]>([]);
+  lines = signal<FavoriteLineSummary[]>([]);
+
+  readonly state = inject(FeedStateService);
 
   constructor(private fav: FavoritesService) {}
 
   ngOnInit(): void {
-    this.fav.getFavoriteLines$().subscribe((list) => this.lines.set(list));
+    this.fav
+      .getFavoriteLines$()
+      .pipe(tap((data) => console.log(data)))
+      .subscribe((list) => this.lines.set(list));
   }
 
-  toggle(line: LineView) {
-    const arr = [...this.lines()];
-    const idx = arr.findIndex((l) => l.lineId === line.lineId);
-    if (idx === -1) return;
-
-    const item = { ...arr[idx], expanded: !arr[idx].expanded };
-    arr[idx] = item;
-    this.lines.set(arr);
-
-    if (item.expanded && !item.reports?.length) {
-      this.loadReports(item.lineId);
-    }
-  }
-
-  private loadReports(lineId: ID) {
-    this.setLoading(lineId, true);
-    this.fav.getReportsForLine$(lineId).subscribe({
-      next: (reports) => this.patchLine(lineId, { reports }),
-      complete: () => this.setLoading(lineId, false),
-      error: () => this.setLoading(lineId, false),
-    });
+  onVote(e: { reportId: string; value: 1 | -1 }) {
+    this.state.vote(e.reportId as any, e.value);
   }
 
   remove(lineId: ID) {
     this.fav.removeFavorite$(lineId).subscribe(() => {
-      this.lines.set(this.lines().filter((l) => l.lineId !== lineId));
+      this.lines.set(this.lines().filter((l) => l.line_id !== lineId));
     });
-  }
-
-  // helpers
-  private setLoading(lineId: ID, loading: boolean) {
-    this.patchLine(lineId, { loading });
-  }
-  private patchLine(lineId: ID, patch: Partial<LineView>) {
-    this.lines.update((list) => list.map((l) => (l.lineId === lineId ? { ...l, ...patch } : l)));
   }
 }

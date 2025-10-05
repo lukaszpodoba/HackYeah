@@ -10,7 +10,7 @@
       [class]="colorClassFor(report.category)"
       data-testid="badge-category"
     >
-      {{ report.category }}
+      {{ categoryMessage[report.category] }}
     </mat-chip>
 
     <mat-chip
@@ -18,53 +18,49 @@
       [class]="colorClassFor(report.category)"
       data-testid="badge-category"
     >
-      {{ report.lineId }}
+      {{ report.line_id }}
     </mat-chip>
 
     <span class="text-xs text-muted-foreground whitespace-nowrap" data-testid="text-timestamp">
-      {{ report.createdAt | timeAgo }}
+      {{ report.report_time | timeAgo }}
     </span>
   </div>
 
   <div class="space-y-2">
-    <h3 class="text-base font-medium leading-tight" data-testid="text-title">
-      {{ report.title }}
-    </h3>
-    <p class="text-sm text-muted-foreground line-clamp-2" data-testid="text-description">
+    <!-- <h3 class="text-base font-medium leading-tight" data-testid="text-title">
+      {{ 'report.title' }}
+    </h3> -->
+    <!-- <p class="text-sm text-muted-foreground line-clamp-2" data-testid="text-description">
       {{ report.description }}
-    </p>
+    </p> -->
   </div>
 
   <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
     <mat-icon class="!w-4 !h-4 !text-inherit">place</mat-icon>
-    <span class="truncate" data-testid="text-location">{{ report.placeName }}</span>
+    <span class="truncate" data-testid="text-location">{{ report.stop.stop_name }}</span>
   </div>
 
   <div class="flex items-center gap-2 pt-1" (click)="$event.stopPropagation()">
     <button
       mat-stroked-button
       class="!min-h-0 !py-1 !px-2 flex items-center gap-1.5"
-      [class.!border-primary]="report.votes?.my === 1"
-      [class.!text-primary]="report.votes?.my === 1"
       aria-label="Zagłosuj w górę"
       (click)="onVoteClick($event, 1)"
       data-testid="button-upvote"
     >
       <mat-icon class="!w-4 !h-4">thumb_up</mat-icon>
-      <span class="text-xs">{{ report.votes?.up ?? 0 }}</span>
+      <span class="text-xs">{{ report.like_total }}</span>
     </button>
 
     <button
       mat-stroked-button
       class="!min-h-0 !py-1 !px-2 flex items-center gap-1.5"
-      [class.!border-destructive]="report.votes?.my === -1"
-      [class.!text-destructive]="report.votes?.my === -1"
       aria-label="Zagłosuj w dół"
       (click)="onVoteClick($event, -1)"
       data-testid="button-downvote"
     >
       <mat-icon class="!w-4 !h-4">thumb_down</mat-icon>
-      <span class="text-xs">{{ report.votes?.down ?? 0 }}</span>
+      <span class="text-xs">{{ report.dislike_total }}</span>
     </button>
   </div>
 </mat-card>

@@ -75,7 +75,7 @@ def get_single_report(form_id: int, db: Session = Depends(get_db)):
     return report
 
 
-@router.post("", response_model=FormResponse)
+@router.post("/reports", response_model=FormResponse)
 def create_report(
     payload: FormCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)
 ):

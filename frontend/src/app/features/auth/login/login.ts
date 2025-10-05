@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,11 +15,13 @@ export class Login {
   email = '';
   password = '';
 
+  protected readonly authService = inject(AuthService);
+
   constructor(private router: Router) {}
 
   login() {
     alert(`Zalogowano jako: ${this.email}`);
-    // po kliknięciu OK na alercie przechodzi na mapę (feed)
+    this.authService.login();
     this.router.navigate(['/feed']);
   }
 }
