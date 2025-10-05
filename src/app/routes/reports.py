@@ -4,6 +4,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 
 from src.app.db.dependencies import get_db
+from src.app.models.items import Form
+from src.app.schemas.form import FormCreate
+from src.app.schemas.form import FormResponse
+from datetime import datetime, timezone
+from src.app.services.email_service import send_email
+from fastapi import BackgroundTasks
 from src.app.models.items import Form, User, Departure, Stop, Line
 from src.app.schemas.form import FormCreate, FormResponse
 from src.app.services.scoring_db_core import (
@@ -28,15 +34,6 @@ def get_all_forms(
     if limit > max_limit:
         limit = max_limit
     forms = db.query(Form).offset(offset).limit(limit).all()
-    return forms
-
-
-@router.get("/forms/", response_model=List[FormResponse])
-def get_all_forms(db: Session = Depends(get_db), limit: int = 100, offset: int = 0):
-    max_limit = 1000
-    if limit > max_limit:
-        limit = max_limit
-    forms = db.query(Form).options(joinedload(Form.stop)).offset(offset).limit(limit).all()
     return forms
 
 
@@ -99,10 +96,37 @@ def create_report(payload: FormCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}/like", response_model=FormResponse)
-def increment_like(id: int, db: Session = Depends(get_db)):
+def increment_like(id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     """+1 like and refresh authenticity."""
     try:
         form = apply_like_dislike(db, form_id=id, like_delta=1)
+
+        if not form.is_email_sent and (form.as_form > 1 or not form.confirmed_by_admin):
+            users = db.query(User)\
+                .join(User.lines)\
+                .filter(Line.id == form.line_id).all()
+
+            subject = f"🚨 Wysoki wskaźnik AS na linii {form.line_id}"
+            body = f"""
+            <h3>Uwaga!</h3>
+            <p>W formularzu o ID <b>{form.id}</b> wystąpił wysoki wskaźnik AS.</p>
+            <p><b>Kategoria:</b> {form.category}</p>
+            <p><b>AS:</b> {form.as_form}</p>
+            <p><b>Linia:</b> {form.line_id}</p>
+            <p><b>Opóźnienie:</b> {form.delay} minut</p>
+            <br>
+            <small>System HackYeah Rail App 🚆</small>
+            """
+
+            for user in users:
+                if hasattr(user, "email") and user.email:
+                    background_tasks.add_task(send_email, subject, [user.email], body)
+
+            form.is_email_sent = True
+            db.commit()
+            db.refresh(form)
+
+
         return form
     except ValueError:
         raise HTTPException(status_code=404, detail="Report not found")
@@ -119,11 +143,34 @@ def increment_dislike(id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}/accept", response_model=FormResponse)
-def accept_report(id: int, db: Session = Depends(get_db)):
+def accept_report(id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     form = db.get(Form, id)
     if not form:
         raise HTTPException(status_code=404, detail="Report not found")
     form.confirmed_by_admin = True
+    if not form.is_email_sent and form.as_form > 1:
+            users = db.query(User)\
+                .join(User.lines)\
+                .filter(Line.id == form.line_id).all()
+
+            subject = f"🚨 Wysoki wskaźnik AS na linii {form.line_id}"
+            body = f"""
+            <h3>Uwaga!</h3>
+            <p>W formularzu o ID <b>{form.id}</b> wystąpił wysoki wskaźnik AS.</p>
+            <p><b>Kategoria:</b> {form.category}</p>
+            <p><b>AS:</b> {form.as_form}</p>
+            <p><b>Linia:</b> {form.line_id}</p>
+            <p><b>Opóźnienie:</b> {form.delay} minut</p>
+            <br>
+            <small>System HackYeah Rail App 🚆</small>
+            """
+
+            for user in users:
+                if hasattr(user, "email") and user.email:
+                    background_tasks.add_task(send_email, subject, [user.email], body)
+
+            form.is_email_sent = True
+
     db.commit()
     db.refresh(form)
     return form
@@ -137,7 +184,6 @@ def refresh_report(id: int, db: Session = Depends(get_db)):
         return form
     except ValueError:
         raise HTTPException(status_code=404, detail="Report not found")
-
 
 @router.post("/users/{user_id}/as-daily")
 def user_as_daily(

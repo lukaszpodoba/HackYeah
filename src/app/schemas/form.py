@@ -37,4 +37,6 @@ class FormResponse(BaseModel):
     category: Optional[str] = None
     line_id: Optional[int] = None
     delay: Optional[int] = None
+    confirmed_by_admin: Optional[bool] = None
+    is_email_sent: Optional[bool] = None
     stop: Optional[StopBase] = None
