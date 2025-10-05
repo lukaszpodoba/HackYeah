@@ -9,7 +9,8 @@ export const routes: Routes = [
     path: 'feed',
     loadChildren: () => import('./features/feed/feed.routes').then((r) => r.FEED_ROUTES),
   },
-
-  { path: '', redirectTo: '/feed', pathMatch: 'full' },
-  { path: '**', redirectTo: '/auth' },
+  
+  { path: '', pathMatch: 'full', redirectTo: 'auth/login' },
+  
+  { path: '**', redirectTo: 'auth/login' },
 ];
