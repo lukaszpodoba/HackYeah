@@ -1,0 +1,46 @@
+<section class="bg-white p-6 rounded-xl shadow-md" [class]="borderClass">
+  <h2 class="text-xl font-bold text-slate-800 mb-4">{{ title }}</h2>
+
+  <div class="mb-6 px-3 py-2 rounded-md bg-slate-100 inline-flex items-center gap-4">
+    <span class="font-bold text-slate-800"> Dystans: {{ route.total_cost_km }} km </span>
+  </div>
+
+  <div class="flex flex-col">
+    @for (stop of route.stops; let i = $index; let first = $first; let last = $last; track $index) {
+    <div class="flex items-start gap-3 relative">
+      <div class="min-w-10 h-10 flex items-center justify-center">
+        <div class="text-2xl leading-none">
+          {{ first ? '🟢' : last ? '🔴' : '⚪' }}
+        </div>
+      </div>
+
+      <div class="flex-1 py-2">
+        <div class="text-lg font-semibold text-slate-800">{{ stop.stop_name }}</div>
+        <div class="text-sm text-slate-500 mb-1">Kod: {{ stop.stop_code }}</div>
+
+        @if (stop.line_id_change_here) {
+        <div
+          class="inline-flex items-center px-3 py-1 rounded-full bg-amber-50 border border-amber-400 text-amber-700 font-semibold text-sm"
+        >
+          🔄 Przesiadka na linię {{ stop.line_id_change_here }}
+        </div>
+        }
+      </div>
+    </div>
+
+    @if (!last) {
+    <div class="ml-5 pl-0 flex items-center">
+      <div
+        class="w-1 h-16 rounded relative flex items-center justify-center"
+        [style.background-color]="getLineColor(route.segments[i].line_id)"
+      >
+        <span
+          class="absolute -left-10 bg-white px-3 py-1 rounded-full text-xs font-bold shadow text-slate-800 whitespace-nowrap"
+        >
+          Linia {{ route.segments[i].line_id }}
+        </span>
+      </div>
+    </div>
+    } }
+  </div>
+</section>

@@ -1,0 +1,65 @@
+<div class="max-w-5xl mx-auto p-5">
+  <h1 class="text-center text-slate-800 mb-8 text-3xl font-bold">Zaplanuj swoją podróż</h1>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="searchRoute()"
+    class="bg-slate-50 p-6 rounded-xl shadow-sm mb-8"
+  >
+    <div class="grid gap-5 md:grid-cols-2">
+      <app-stop-select-control-component
+        formControlName="startStopCode"
+        label="Przystanek początkowy:"
+        placeholder="Wybierz przystanek początkowy"
+      />
+      <app-stop-select-control-component
+        formControlName="endStopCode"
+        label="Przystanek końcowy:"
+        placeholder="Wybierz przystanek końcowy"
+      />
+    </div>
+
+    <button
+      type="submit"
+      class="mt-5 w-full inline-flex items-center justify-center px-4 py-3 rounded-md text-white font-semibold bg-sky-600 hover:bg-sky-700 transition disabled:opacity-50"
+      [disabled]="form.invalid"
+    >
+      Szukaj trasy
+    </button>
+  </form>
+
+  @if (mainRoute()) {
+  <div class="flex flex-col gap-6">
+    <app-route-view-component
+      [route]="mainRoute()!"
+      title="📍 Trasa główna"
+      accent="emerald-600"
+      [getLineColor]="getLineColor"
+    />
+    @if (alternativeRoute()) {
+    <section class="mt-2">
+      <button
+        (click)="toggleAlternative()"
+        class="w-full text-left px-4 py-3 rounded-md font-semibold text-white bg-amber-500 hover:bg-amber-600 transition"
+      >
+        {{ showAlternative() ? '▼' : '▶' }} Pokaż trasę alternatywną (w przypadku opóźnienia)
+      </button>
+
+      @if (showAlternative()) {
+      <app-route-view-component
+        class="mt-4"
+        [route]="alternativeRoute()!"
+        title="🔀 Trasa alternatywna"
+        accent="amber-500"
+        [getLineColor]="getLineColor"
+      />
+      }
+    </section>
+    }
+  </div>
+  } @else {
+  <div class="text-center p-16 text-slate-500 text-base bg-slate-50 rounded-xl">
+    <p>Wybierz przystanki i kliknij „Szukaj trasy”.</p>
+  </div>
+  }
+</div>

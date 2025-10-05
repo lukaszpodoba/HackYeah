@@ -36,3 +36,24 @@ export const markerClassByType: Record<ReportCategory, string> = {
   ACCIDENT: 'marker--maintenance',
   OTHER: 'marker--info',
 };
+
+type RouteStop = {
+  stop_name: string;
+  stop_code: string | number;
+  line_id_change_here?: string | number | null;
+};
+type Segment = { line_id: string | number };
+export type TRoute = {
+  total_cost_km: number;
+  stops: RouteStop[];
+  segments: Segment[];
+};
+
+export interface ReportFilter {
+  bbox?: [number, number, number, number];
+  categories?: ReportCategory[];
+  sources?: ReportSource[];
+  minConfidence?: Confidence;
+  lineIds?: ID[];
+  connectionIds?: ID[];
+}
