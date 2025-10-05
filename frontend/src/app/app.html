@@ -1,6 +1,7 @@
 <section class="h-dvh flex flex-col overflow-hidden">
   <header class="w-full flex gap-4 bg-grey-300 items-center p-4 shrink-0">
     <section class="text-body-large-bold">Delays on Time</section>
+
     <nav class="flex gap-2">
       <a
         routerLink="/feed"
@@ -17,6 +18,10 @@
         Ulubione trasy
       </a>
     </nav>
+
+    <div class="ml-auto">
+      <button mat-flat-button color="primary" (click)="openAddDialog()">Dodaj zgłoszenie</button>
+    </div>
   </header>
 
   <mat-divider class="shrink-0"></mat-divider>
