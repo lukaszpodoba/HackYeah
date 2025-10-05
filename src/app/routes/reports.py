@@ -37,15 +37,6 @@ def get_all_forms(
     return forms
 
 
-@router.get("/forms/", response_model=List[FormResponse])
-def get_all_forms(db: Session = Depends(get_db), limit: int = 100, offset: int = 0):
-    max_limit = 1000
-    if limit > max_limit:
-        limit = max_limit
-    forms = db.query(Form).options(joinedload(Form.stop)).offset(offset).limit(limit).all()
-    return forms
-
-
 # Getting all forms for specific user
 @router.get("/forms/user/{user_id}", response_model=List[FormResponse])
 def get_reports(user_id: int, db: Session = Depends(get_db)):
@@ -105,10 +96,31 @@ def create_report(payload: FormCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}/like", response_model=FormResponse)
-def increment_like(id: int, db: Session = Depends(get_db)):
+def increment_like(id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     """+1 like and refresh authenticity."""
     try:
         form = apply_like_dislike(db, form_id=id, like_delta=1)
+
+        if form.as_form and form.as_form > 10:
+            users = db.query(User).filter(User.line_id == form.line_id).all()
+
+            subject = f"🚨 Wysoki wskaźnik AS na linii {form.line_id}"
+            body = f"""
+            <h3>Uwaga!</h3>
+            <p>W formularzu o ID <b>{form.id}</b> wystąpił wysoki wskaźnik AS.</p>
+            <p><b>Kategoria:</b> {form.category}</p>
+            <p><b>AS:</b> {form.as_form}</p>
+            <p><b>Linia:</b> {form.line_id}</p>
+            <p><b>Opóźnienie:</b> {form.delay} minut</p>
+            <br>
+            <small>System HackYeah Rail App 🚆</small>
+            """
+
+            for user in users:
+                if hasattr(user, "email") and user.email:
+                    background_tasks.add_task(send_email, subject, [user.email], body)
+
+
         return form
     except ValueError:
         raise HTTPException(status_code=404, detail="Report not found")
