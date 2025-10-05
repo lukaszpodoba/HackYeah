@@ -57,7 +57,7 @@ def get_single_report(form_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=FormResponse)
-def create_report(payload: FormCreate, db: Session = Depends(get_db)):
+def create_report(payload: FormCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     """Create report and compute initial authenticity (as_form)."""
     user = db.query(User).filter(User.id == payload.user_id).first()
     if not user:
@@ -78,6 +78,8 @@ def create_report(payload: FormCreate, db: Session = Depends(get_db)):
     if payload.delay < 0:
         raise HTTPException(status_code=400, detail="Delay cannot be negative")
 
+    is_admin = (user.role == "admin")
+
     try:
         form = create_form_with_initial_score(
             db,
@@ -88,8 +90,16 @@ def create_report(payload: FormCreate, db: Session = Depends(get_db)):
             category=payload.category,
             reported_delay_min=payload.delay,
             official_delay_min=None,
-            confirmed_by_admin=False,
+            confirmed_by_admin=is_admin,
         )
+        db.commit()
+        db.refresh(form)
+
+        if is_admin and form.confirmed_by_admin and form.as_form > 1 and not form.is_email_sent:
+            send_as_notification(form, db, background_tasks)
+            db.commit()
+            db.refresh(form)
+
         return form
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -97,35 +107,13 @@ def create_report(payload: FormCreate, db: Session = Depends(get_db)):
 
 @router.put("/{id}/like", response_model=FormResponse)
 def increment_like(id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    """+1 like and refresh authenticity."""
     try:
         form = apply_like_dislike(db, form_id=id, like_delta=1)
 
         if not form.is_email_sent and (form.as_form > 1 or not form.confirmed_by_admin):
-            users = db.query(User)\
-                .join(User.lines)\
-                .filter(Line.id == form.line_id).all()
-
-            subject = f"🚨 Wysoki wskaźnik AS na linii {form.line_id}"
-            body = f"""
-            <h3>Uwaga!</h3>
-            <p>W formularzu o ID <b>{form.id}</b> wystąpił wysoki wskaźnik AS.</p>
-            <p><b>Kategoria:</b> {form.category}</p>
-            <p><b>AS:</b> {form.as_form}</p>
-            <p><b>Linia:</b> {form.line_id}</p>
-            <p><b>Opóźnienie:</b> {form.delay} minut</p>
-            <br>
-            <small>System HackYeah Rail App 🚆</small>
-            """
-
-            for user in users:
-                if hasattr(user, "email") and user.email:
-                    background_tasks.add_task(send_email, subject, [user.email], body)
-
-            form.is_email_sent = True
+            send_as_notification(form, db, background_tasks)
             db.commit()
             db.refresh(form)
-
 
         return form
     except ValueError:
@@ -149,27 +137,7 @@ def accept_report(id: int, background_tasks: BackgroundTasks, db: Session = Depe
         raise HTTPException(status_code=404, detail="Report not found")
     form.confirmed_by_admin = True
     if not form.is_email_sent and form.as_form > 1:
-            users = db.query(User)\
-                .join(User.lines)\
-                .filter(Line.id == form.line_id).all()
-
-            subject = f"🚨 Wysoki wskaźnik AS na linii {form.line_id}"
-            body = f"""
-            <h3>Uwaga!</h3>
-            <p>W formularzu o ID <b>{form.id}</b> wystąpił wysoki wskaźnik AS.</p>
-            <p><b>Kategoria:</b> {form.category}</p>
-            <p><b>AS:</b> {form.as_form}</p>
-            <p><b>Linia:</b> {form.line_id}</p>
-            <p><b>Opóźnienie:</b> {form.delay} minut</p>
-            <br>
-            <small>System HackYeah Rail App 🚆</small>
-            """
-
-            for user in users:
-                if hasattr(user, "email") and user.email:
-                    background_tasks.add_task(send_email, subject, [user.email], body)
-
-            form.is_email_sent = True
+        send_as_notification(form, db, background_tasks)
 
     db.commit()
     db.refresh(form)
@@ -205,3 +173,26 @@ def user_as_daily(
         return {"user_id": user_id, "stored_as_value": val}
     except ValueError:
         raise HTTPException(status_code=404, detail="User not found")
+
+
+def send_as_notification(form, db, background_tasks):
+    users = db.query(User)\
+        .join(User.lines)\
+        .filter(Line.id == form.line_id).all()
+
+    subject = f"🚨 Wysoki wskaźnik AS na linii {form.line_id}"
+    body = f"""
+    <h3>Uwaga!</h3>
+    <p>W formularzu o ID <b>{form.id}</b> wystąpił wysoki wskaźnik AS.</p>
+    <p><b>Kategoria:</b> {form.category}</p>
+    <p><b>AS:</b> {form.as_form}</p>
+    <p><b>Linia:</b> {form.line_id}</p>
+    <p><b>Opóźnienie:</b> {form.delay} minut</p>
+    <br>
+    <small>System HackYeah Rail App 🚆</small>
+    """
+
+    for user in users:
+        if hasattr(user, "email") and user.email:
+            background_tasks.add_task(send_email, subject, [user.email], body)
+    form.is_email_sent = True
