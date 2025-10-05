@@ -6,11 +6,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { ReportCategory } from '../../../../core/models/util.model';
 import { TimeAgoPipe } from '../../../../shared/pipe/time-ago.pipe';
-import { NgStyle } from '@angular/common';
+
 
 @Component({
   selector: 'app-feed-card-component',
-  imports: [MatCardModule, MatButtonModule, MatChipsModule, MatIconModule, TimeAgoPipe, NgStyle],
+  imports: [MatCardModule, MatButtonModule, MatChipsModule, MatIconModule, TimeAgoPipe],
   templateUrl: './feed-card-component.html',
 })
 export class FeedCardComponent {
