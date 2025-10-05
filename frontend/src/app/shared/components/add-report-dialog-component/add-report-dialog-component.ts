@@ -15,6 +15,7 @@ import {
   Stop,
   CreateReportPayload,
 } from '../../../core/form/report-form-service';
+import { StopSelectControlComponent } from '../stop-select-control-component/stop-select-control-component';
 
 @Component({
   selector: 'app-add-report-dialog',
@@ -28,6 +29,7 @@ import {
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
+    StopSelectControlComponent,
   ],
   templateUrl: './add-report-dialog-component.html',
 })
@@ -37,7 +39,6 @@ export class AddReportDialogComponent implements OnInit {
   private service = inject(ReportFormService);
   private snack = inject(MatSnackBar);
 
-  stops = signal<Stop[]>([]);
   saving = signal(false);
 
   readonly categoryLabels: Record<ReportCategory, string> = {
@@ -54,19 +55,18 @@ export class AddReportDialogComponent implements OnInit {
   );
 
   form = this.fb.group({
-    createdAt: [new Date().toISOString() as ISODate],
-    stopId: ['', Validators.required],
+    user_id: [9, Validators.required],
+    departure_id: [2, Validators.required],
+    stop_id: [0, Validators.required],
     category: [ReportCategory.OTHER, Validators.required],
-    lineNumber: ['', Validators.required],
-    delayMinutes: [null as number | null, []],
+    line_id: [4, Validators.required],
+    delay: [null as number | null, []],
   });
 
-  ngOnInit(): void {
-    this.service.getStops$().subscribe((s) => this.stops.set(s));
-  }
+  ngOnInit(): void {}
 
   nowHuman(): string {
-    return new Date(this.form.value.createdAt as string).toLocaleString('pl-PL', {
+    return new Date().toLocaleString('pl-PL', {
       dateStyle: 'medium',
       timeStyle: 'short',
     });

@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
 import { ID, ISODate, ReportCategory } from '../models/util.model';
+import { HttpClient } from '@angular/common/http';
+import { TReport } from '../../features/feed/model/feed.model';
 
 export interface Stop {
   id: ID;
@@ -8,27 +10,22 @@ export interface Stop {
 }
 
 export interface CreateReportPayload {
-  createdAt: ISODate;
-  stopId: ID;
+  user_id: number;
+  departure_id: number;
+  stop_id: number;
   category: ReportCategory;
-  lineNumber: string;
-  delayMinutes?: number | null;
+  line_id: number;
+  delay: number;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReportFormService {
-  getStops$(): Observable<Stop[]> {
-    const stops: Stop[] = [
-      { id: 'stop-1' as ID, name: 'Centrum, Dworzec PKP' },
-      { id: 'stop-2' as ID, name: 'Plac Zbawiciela' },
-      { id: 'stop-3' as ID, name: 'Rondo Grunwaldzkie' },
-    ];
-    return of(stops).pipe(delay(200));
-  }
+  private readonly BASE_URL = 'http://127.0.0.1:8000/reports';
+  private readonly http = inject(HttpClient);
 
-  saveReport$(payload: CreateReportPayload): Observable<{ ok: true; id: ID }> {
-    return of({ ok: true, id: ('rep-' + Math.random().toString(36).slice(2)) as ID });
+  saveReport$(payload: CreateReportPayload): Observable<TReport> {
+    return this.http.post<TReport>(this.BASE_URL, payload);
   }
 }

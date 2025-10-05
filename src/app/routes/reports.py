@@ -97,10 +97,6 @@ def create_report(
     if not departure:
         raise HTTPException(status_code=404, detail="Departure not found")
 
-    stop = db.query(Stop).filter(Stop.id == payload.stop_id).first()
-    if not stop:
-        raise HTTPException(status_code=404, detail="Stop not found")
-
     line = db.query(Line).filter(Line.id == payload.line_id).first()
     if not line:
         raise HTTPException(status_code=404, detail="Line not found")
@@ -115,7 +111,7 @@ def create_report(
             db,
             user_id=payload.user_id,
             departure_id=payload.departure_id,
-            stop_id=payload.stop_id,
+            stop_id=1,
             line_id=payload.line_id,
             category=payload.category,
             reported_delay_min=payload.delay,
