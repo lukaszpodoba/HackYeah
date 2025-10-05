@@ -1,5 +1,4 @@
 from typing import List, Optional
-from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -17,7 +16,23 @@ from src.app.services.scoring_db_core import (
 router = APIRouter()
 
 
-@router.get("/{user_id}", response_model=List[FormResponse])
+# Getting all forms
+@router.get("/forms/", response_model=List[FormResponse])
+def get_all_forms(
+    db: Session = Depends(get_db),
+    limit: int = 100,
+    offset: int = 0,
+):
+    # Enforce a reasonable maximum limit
+    max_limit = 1000
+    if limit > max_limit:
+        limit = max_limit
+    forms = db.query(Form).offset(offset).limit(limit).all()
+    return forms
+
+
+# Getting all forms for specific user
+@router.get("/forms/user/{user_id}", response_model=List[FormResponse])
 def get_reports(user_id: int, db: Session = Depends(get_db)):
     """List user's reports (Form rows)."""
     reports = db.query(Form).filter(Form.user_id == user_id).all()
