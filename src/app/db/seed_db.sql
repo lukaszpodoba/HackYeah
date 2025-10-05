@@ -4,6 +4,7 @@ PRAGMA foreign_keys = ON;
 DELETE FROM form;
 DELETE FROM departure;
 DELETE FROM as_history;
+DELETE FROM user_line;
 DELETE FROM "user";
 DELETE FROM line;
 DELETE FROM stop;
@@ -53,19 +54,35 @@ INSERT INTO stop (stop_code, stop_name, latitude, longitude) VALUES
 (4003, 'Tarnów', 50.0130, 20.9860);
 
 -- ================================================
--- user
+-- user (bez line_id !)
 -- ================================================
-INSERT INTO "user" (first_name, last_name, password, role, line_id) VALUES
-('Marta', 'Nowak', 'admin123', 'admin', 1),
-('Paweł', 'Wiśniewski', 'pass123', 'maszynista', 2),
-('Katarzyna', 'Szymańska', 'pass123', 'dyżurny ruchu', 3),
-('Tomasz', 'Król', 'pass123', 'uzytkownik', 1),
-('Agnieszka', 'Mazur', 'pass123', 'uzytkownik', 1),
-('Michał', 'Kowalczyk', 'pass123', 'uzytkownik', 3),
-('Dominika', 'Duda', 'pass123', 'moderator', 2),
-('Jan', 'Nowicki', 'pass123', 'uzytkownik', 5),
-('Ewelina', 'Krawczyk', 'pass123', 'uzytkownik', 4),
-('Piotr', 'Baran', 'pass123', 'uzytkownik', 5);
+INSERT INTO "user" (first_name, last_name, password, role) VALUES
+('Marta', 'Nowak', 'admin123', 'admin'),
+('Paweł', 'Wiśniewski', 'pass123', 'maszynista'),
+('Katarzyna', 'Szymańska', 'pass123', 'dyżurny ruchu'),
+('Tomasz', 'Król', 'pass123', 'uzytkownik'),
+('Agnieszka', 'Mazur', 'pass123', 'uzytkownik'),
+('Michał', 'Kowalczyk', 'pass123', 'uzytkownik'),
+('Dominika', 'Duda', 'pass123', 'moderator'),
+('Jan', 'Nowicki', 'pass123', 'uzytkownik'),
+('Ewelina', 'Krawczyk', 'pass123', 'uzytkownik'),
+('Piotr', 'Baran', 'pass123', 'uzytkownik');
+
+-- ================================================
+-- user_line (relacja wiele-do-wielu)
+-- ================================================
+INSERT INTO user_line (user_id, line_id) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 1),
+(5, 1),
+(6, 3),
+(7, 2),
+(8, 5),
+(9, 4),
+(10, 5);
+-- Możesz dodać więcej powiązań według potrzeb projektu
 
 -- ================================================
 -- as_history
