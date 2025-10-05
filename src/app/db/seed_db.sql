@@ -1,17 +1,15 @@
-PRAGMA foreign_keys = OFF;
+PRAGMA foreign_keys = ON;
 
--- Czyszczenie tabel w odpowiedniej kolejności
+-- clear in FK-safe order
 DELETE FROM form;
 DELETE FROM departure;
 DELETE FROM as_history;
-DELETE FROM user;
+DELETE FROM "user";
 DELETE FROM line;
 DELETE FROM stop;
 
-PRAGMA foreign_keys = ON;
-
 -- ================================================
--- line – rzeczywiste linie SKA w Krakowie
+-- line
 -- ================================================
 INSERT INTO line (short_name, long_name) VALUES
 ('SKA1', 'SKA1 – Kraków Główny ↔ Wieliczka Rynek-Kopalnia'),
@@ -21,14 +19,14 @@ INSERT INTO line (short_name, long_name) VALUES
 ('SKA5', 'SKA5 – Kraków Główny ↔ Lotnisko Balice');
 
 -- ================================================
--- stop – rzeczywiste przystanki SKA
+-- stop
 -- ================================================
 INSERT INTO stop (stop_code, stop_name, latitude, longitude) VALUES
 (2001, 'Kraków Lotnisko / Airport', 50.0777, 19.7856),
 (2002, 'Kraków Olszanica', 50.0765, 19.9860),
 (2003, 'Kraków Zakliki', 50.0735, 19.9800),
 (2004, 'Kraków Młynówka', 50.0705, 19.9600),
-(2005, 'Kraków Bronowice', 50.081, 19.8922),
+(2005, 'Kraków Bronowice', 50.0810, 19.8922),
 (2006, 'Kraków Łobzów', 50.0815, 19.9212),
 (2007, 'Kraków Główny', 50.0665, 19.9469),
 (2008, 'Kraków Grzegórzki', 50.0580, 19.9530),
@@ -55,9 +53,9 @@ INSERT INTO stop (stop_code, stop_name, latitude, longitude) VALUES
 (4003, 'Tarnów', 50.0130, 20.9860);
 
 -- ================================================
--- user – przykładowi pracownicy i pasażerowie
+-- user
 -- ================================================
-INSERT INTO user (first_name, last_name, password, role, line_id) VALUES
+INSERT INTO "user" (first_name, last_name, password, role, line_id) VALUES
 ('Marta', 'Nowak', 'admin123', 'admin', 1),
 ('Paweł', 'Wiśniewski', 'pass123', 'maszynista', 2),
 ('Katarzyna', 'Szymańska', 'pass123', 'dyżurny ruchu', 3),
@@ -70,57 +68,44 @@ INSERT INTO user (first_name, last_name, password, role, line_id) VALUES
 ('Piotr', 'Baran', 'pass123', 'uzytkownik', 5);
 
 -- ================================================
--- as_history – historia ocen/punktów przypisana do użytkowników
+-- as_history
 -- ================================================
 INSERT INTO as_history (as_user, user_id) VALUES
-(10, 1),
-(25, 1),
+(10, 1), (25, 1),
 (40, 2),
-(5, 3),
-(15, 3),
-(0, 4),
-(30, 4),
-(8, 5),
-(12, 5),
+(5, 3), (15, 3),
+(0, 4), (30, 4),
+(8, 5), (12, 5),
 (7, 6),
 (18, 7),
-(22, 8),
-(35, 8),
-(5, 9),
-(27, 9),
-(13, 10),
-(31, 10);
+(22, 8), (35, 8),
+(5, 9), (27, 9),
+(13, 10), (31, 10);
 
 -- ================================================
--- departure – realistyczne połączenia SKA
+-- departure
 -- ================================================
-INSERT INTO departure (line_id, stop_id, planned_arrival_time, planned_departure_time, actual_arrival_time, actual_departure_time)
-VALUES
-(1, 1, '2025-10-04 06:00', '2025-10-04 06:05', '2025-10-04 06:02', '2025-10-04 06:06'),
-(1, 9, '2025-10-04 06:25', '2025-10-04 06:27', '2025-10-04 06:30', '2025-10-04 06:32'),
-(2, 1, '2025-10-04 07:15', '2025-10-04 07:18', '2025-10-04 07:17', '2025-10-04 07:20'),
-(2, 5, '2025-10-04 07:25', '2025-10-04 07:30', '2025-10-04 07:27', '2025-10-04 07:32'),
-(3, 1, '2025-10-04 08:00', '2025-10-04 08:05', '2025-10-04 08:02', '2025-10-04 08:08'),
-(3, 4, '2025-10-04 08:20', '2025-10-04 08:25', '2025-10-04 08:23', '2025-10-04 08:28'),
-(4, 1, '2025-10-04 09:00', '2025-10-04 09:03', '2025-10-04 09:01', '2025-10-04 09:05'),
-(4, 2, '2025-10-04 09:10', '2025-10-04 09:12', '2025-10-04 09:13', '2025-10-04 09:14'),
-(5, 1, '2025-10-04 10:00', '2025-10-04 10:03', '2025-10-04 10:01', '2025-10-04 10:05'),
-(5, 10, '2025-10-04 10:25', '2025-10-04 10:30', '2025-10-04 10:28', '2025-10-04 10:33');
+INSERT INTO departure (line_id, stop_id, planned_arrival_time, planned_departure_time, actual_arrival_time, actual_departure_time) VALUES
+(1, 1, '2025-10-04 06:00:00', '2025-10-04 06:05:00', '2025-10-04 06:02:00', '2025-10-04 06:06:00'),
+(1, 9, '2025-10-04 06:25:00', '2025-10-04 06:27:00', '2025-10-04 06:30:00', '2025-10-04 06:32:00'),
+(2, 1, '2025-10-04 07:15:00', '2025-10-04 07:18:00', '2025-10-04 07:17:00', '2025-10-04 07:20:00'),
+(2, 5, '2025-10-04 07:25:00', '2025-10-04 07:30:00', '2025-10-04 07:27:00', '2025-10-04 07:32:00'),
+(3, 1, '2025-10-04 08:00:00', '2025-10-04 08:05:00', '2025-10-04 08:02:00', '2025-10-04 08:08:00'),
+(3, 4, '2025-10-04 08:20:00', '2025-10-04 08:25:00', '2025-10-04 08:23:00', '2025-10-04 08:28:00'),
+(4, 1, '2025-10-04 09:00:00', '2025-10-04 09:03:00', '2025-10-04 09:01:00', '2025-10-04 09:05:00'),
+(4, 2, '2025-10-04 09:10:00', '2025-10-04 09:12:00', '2025-10-04 09:13:00', '2025-10-04 09:14:00'),
+(5, 1, '2025-10-04 10:00:00', '2025-10-04 10:03:00', '2025-10-04 10:01:00', '2025-10-04 10:05:00'),
+(5, 10, '2025-10-04 10:25:00', '2025-10-04 10:30:00', '2025-10-04 10:28:00', '2025-10-04 10:33:00');
 
 -- ================================================
--- form – zgłoszenia użytkowników powiązane z połączeniami
+-- form
 -- ================================================
 INSERT INTO form (
-    user_id, departure_id, report_time, as_form, confirmed_by_admin, like_total, dislike_total,
-    stop_id, category, line_id, delay
+user_id, departure_id, report_time, as_form, confirmed_by_admin, like_total, dislike_total,
+stop_id, category, line_id, delay
 ) VALUES
-(1, 1, '2025-10-04 06:40', 12, 1, 130, 5, 10, 'Opóźnienie pociągu', 1, 8),
-(2, 2, '2025-10-04 07:25', 7, 0, 75, 10, 9, 'Awaria sygnalizacji', 2, 15),
-(3, 3, '2025-10-04 08:10', 22, 1, 98, 4, 7, 'Utrudnienia techniczne', 3, 5),
-(4, 4, '2025-10-04 09:10', 9, 0, 34, 3, 6, 'Zmiana toru odjazdu', 4, 3),
-(5, 5, '2025-10-04 10:20', 18, 1, 210, 2, 7, 'Opóźnienie przez mgłę', 5, 12);
-
--- ================================================
--- Podsumowanie
--- ================================================
-SELECT COUNT(*) AS liczba_zgloszen FROM form;
+(1, 1, '2025-10-04 06:40:00', 12, 1, 130, 5, 10, 'Opóźnienie pociągu', 1, 8),
+(2, 2, '2025-10-04 07:25:00', 7, 0, 75, 10, 9, 'Awaria sygnalizacji', 2, 15),
+(3, 3, '2025-10-04 08:10:00', 22, 1, 98, 4, 7, 'Utrudnienia techniczne', 3, 5),
+(4, 4, '2025-10-04 09:10:00', 9, 0, 34, 3, 6, 'Zmiana toru odjazdu', 4, 3),
+(5, 5, '2025-10-04 10:20:00', 18, 1, 210, 2, 7, 'Opóźnienie przez mgłę', 5, 12);
