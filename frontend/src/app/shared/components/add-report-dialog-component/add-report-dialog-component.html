@@ -1,22 +1,14 @@
 <h2 mat-dialog-title>Dodaj zgłoszenie</h2>
 
 <form class="p-4 flex flex-col gap-4" [formGroup]="form" (ngSubmit)="submit()">
-  <mat-form-field appearance="outline">
+  <mat-form-field>
     <mat-label>Data i godzina</mat-label>
     <input matInput [value]="nowHuman()" readonly />
   </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Miejsce zgłoszenia (przystanek)</mat-label>
-    <mat-select formControlName="stopId" required>
-      @for (s of stops(); track s.id) {
-      <mat-option [value]="s.id">{{ s.name }}</mat-option>
-      }
-    </mat-select>
-    <mat-error>Wybierz przystanek</mat-error>
-  </mat-form-field>
+  <app-stop-select-control-component formControlName="stop_id"></app-stop-select-control-component>
 
-  <mat-form-field appearance="outline">
+  <mat-form-field>
     <mat-label>Kategoria</mat-label>
     <mat-select formControlName="category" required>
       @for (c of categoryOptions(); track c.value) {
@@ -26,15 +18,15 @@
     <mat-error>Wybierz kategorię</mat-error>
   </mat-form-field>
 
-  <mat-form-field appearance="outline">
+  <mat-form-field>
     <mat-label>Nr linii</mat-label>
-    <input matInput formControlName="lineNumber" placeholder="np. 147" />
+    <input matInput formControlName="line_id" placeholder="np. 147" />
     <mat-error>Podaj numer linii</mat-error>
   </mat-form-field>
 
-  <mat-form-field appearance="outline">
+  <mat-form-field>
     <mat-label>Opóźnienie (minuty)</mat-label>
-    <input matInput type="number" min="0" max="180" formControlName="delayMinutes" />
+    <input matInput type="number" min="0" max="180" formControlName="delay" />
     <mat-hint>Opcjonalne</mat-hint>
   </mat-form-field>
 

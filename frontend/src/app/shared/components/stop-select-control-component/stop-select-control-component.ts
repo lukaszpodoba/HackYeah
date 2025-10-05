@@ -28,15 +28,15 @@ export class StopSelectControlComponent implements ControlValueAccessor {
 
   // CVA
   disabled = signal(false);
-  private onChange: (val: string | null) => void = () => {};
+  private onChange: (val: number | null) => void = () => {};
   private onTouched: () => void = () => {};
-  value = signal<string | null>(null); // <- stop_code
+  value = signal<number | null>(null); // <- stop_code
 
   // API
-  writeValue(code: string | null): void {
+  writeValue(code: number | null): void {
     this.value.set(code);
   }
-  registerOnChange(fn: (val: string | null) => void): void {
+  registerOnChange(fn: (val: number | null) => void): void {
     this.onChange = fn;
   }
   registerOnTouched(fn: () => void): void {
@@ -65,7 +65,7 @@ export class StopSelectControlComponent implements ControlValueAccessor {
   }
 
   onSelectChange(e: Event) {
-    const code = (e.target as HTMLSelectElement).value || null;
+    const code = +(e.target as HTMLSelectElement).value || null;
     this.value.set(code);
     this.onChange(code);
     this.onTouched();
