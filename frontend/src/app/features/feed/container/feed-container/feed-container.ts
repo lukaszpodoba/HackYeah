@@ -63,7 +63,10 @@ export class FeedContainer implements AfterViewInit, OnDestroy {
     const item = this.state.reports().find((x) => x.id === name);
     if (!item || !this.map) return;
 
-    this.map.flyTo({ center: [56, 57], zoom: Math.max(this.map.getZoom(), 14) });
+    this.map.flyTo({
+      center: [item.stop.longitude, item.stop.latitude],
+      zoom: Math.max(this.map.getZoom(), 14),
+    });
 
     const m = this.markers.get(name);
     m?.togglePopup();
@@ -71,7 +74,10 @@ export class FeedContainer implements AfterViewInit, OnDestroy {
 
   onCardClicked(report: TReport) {
     this.ui.openReport(report);
-    this.map?.flyTo({ center: [56, 57], zoom: Math.max(this.map.getZoom() ?? 0, 14) });
+    this.map?.flyTo({
+      center: [report.stop.longitude, report.stop.latitude],
+      zoom: Math.max(this.map.getZoom() ?? 0, 14),
+    });
   }
 
   onVote(e: { reportId: string; value: 1 | -1 }) {
@@ -100,7 +106,7 @@ export class FeedContainer implements AfterViewInit, OnDestroy {
       });
 
       const marker = new Marker({ element: el, anchor: 'bottom' })
-        .setLngLat([56, 57])
+        .setLngLat([report.stop.longitude, report.stop.latitude])
         .addTo(this.map);
 
       this.markers.set(report.id ?? '', marker);

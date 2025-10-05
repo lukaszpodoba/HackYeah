@@ -7,7 +7,6 @@ import { MatCardModule } from '@angular/material/card';
 import { ReportCategory } from '../../../../core/models/util.model';
 import { TimeAgoPipe } from '../../../../shared/pipe/time-ago.pipe';
 
-
 @Component({
   selector: 'app-feed-card-component',
   imports: [MatCardModule, MatButtonModule, MatChipsModule, MatIconModule, TimeAgoPipe],
@@ -24,6 +23,13 @@ export class FeedCardComponent {
     [ReportCategory.ROADWORKS]: 'bg-destructive text-destructive-foreground',
     [ReportCategory.VEHICLE_FAILURE]: 'bg-chart-4 text-white',
     [ReportCategory.OTHER]: 'bg-chart-2 text-white',
+  };
+
+  categoryMessage: Record<ReportCategory, string> = {
+    [ReportCategory.ROADWORKS]: 'Opóźnienie z powodu robót drogowych',
+    [ReportCategory.VEHICLE_FAILURE]: 'Opóźnienie z powodu awarii pojazdu',
+    [ReportCategory.ACCIDENT]: 'Opóźnienie z powodu wypadku/kolizji',
+    [ReportCategory.OTHER]: 'Opóźnienie z innego powodu',
   };
 
   colorClassFor(category: ReportCategory): string {

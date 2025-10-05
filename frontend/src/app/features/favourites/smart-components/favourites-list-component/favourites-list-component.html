@@ -7,66 +7,48 @@
   </div>
 
   <div class="flex flex-col gap-3 p-4">
-    @for (line of lines(); track line.lineId) {
+    @for (line of lines(); track line.line_id) {
     <div class="border rounded-xl bg-white">
       <button
         type="button"
         class="w-full flex items-center justify-between gap-4 p-3 hover:bg-muted/50 rounded-xl text-left"
-        (click)="toggle(line)"
-        aria-expanded="{{ !!line.expanded }}"
       >
         <div class="flex items-center gap-2">
-          <span
-            class="inline-block px-2 py-0.5 rounded-md border text-xs font-medium"
-            [class.border-primary]="line.mode === 'BUS'"
-            [class.border-emerald-500]="line.mode === 'TRAM'"
-          >
-            {{ line.label }}
-          </span>
-          <span class="text-sm text-muted-foreground">
-            {{ line.mode === 'BUS' ? 'Autobus' : 'Tramwaj' }}
+          <span class="inline-block px-2 py-0.5 rounded-md border text-xs font-medium">
+            Linia: {{ line.line_id }}
           </span>
         </div>
 
         <div class="flex items-center gap-3">
           <span class="text-xs bg-muted px-2 py-1 rounded-md">
-            {{ line.reportCount }} zgłoszeń
+            {{ line.forms.length }} zgłoszeń
           </span>
 
           <button
             mat-button
             color="warn"
             class="!min-h-0 !py-1 !px-2"
-            (click)="$event.stopPropagation(); remove(line.lineId)"
+            (click)="$event.stopPropagation(); remove(line.line_id)"
           >
             <mat-icon class="!w-4 !h-4">delete</mat-icon>
             <span class="text-xs">Usuń z ulubionych</span>
           </button>
 
-          <mat-icon
-            class="transition-transform"
-            [style.transform]="line.expanded ? 'rotate(180deg)' : 'rotate(0deg)'"
-            >expand_more</mat-icon
-          >
+          <mat-icon class="transition-transform"> expand_more </mat-icon>
         </div>
       </button>
 
-      @if (line.expanded) {
+      @if (line) {
       <div class="p-3 pt-0">
-        @if (line.loading) {
-        <div class="flex items-center gap-2 p-4">
-          <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
-          <span class="text-sm text-muted-foreground">Ładowanie zgłoszeń…</span>
-        </div>
-        } @else { @if (line.reports?.length) {
+        @if (line.forms.length) {
         <div class="flex flex-col gap-3">
-          @for (r of line.reports; track r.id) {
-          <app-feed-card-component [report]="r"></app-feed-card-component>
+          @for (r of line.forms; track r.id) {
+          <app-feed-card-component [report]="r" (vote)="onVote($event)"></app-feed-card-component>
           }
         </div>
         } @else {
         <div class="p-4 text-sm text-muted-foreground">Brak zgłoszeń dla tej linii.</div>
-        } }
+        }
       </div>
       }
     </div>

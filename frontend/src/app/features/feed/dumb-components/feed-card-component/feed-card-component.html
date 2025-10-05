@@ -10,7 +10,7 @@
       [class]="colorClassFor(report.category)"
       data-testid="badge-category"
     >
-      {{ report.category }}
+      {{ categoryMessage[report.category] }}
     </mat-chip>
 
     <mat-chip
@@ -27,9 +27,9 @@
   </div>
 
   <div class="space-y-2">
-    <h3 class="text-base font-medium leading-tight" data-testid="text-title">
+    <!-- <h3 class="text-base font-medium leading-tight" data-testid="text-title">
       {{ 'report.title' }}
-    </h3>
+    </h3> -->
     <!-- <p class="text-sm text-muted-foreground line-clamp-2" data-testid="text-description">
       {{ report.description }}
     </p> -->

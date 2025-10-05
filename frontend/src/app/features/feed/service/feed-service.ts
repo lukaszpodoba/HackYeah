@@ -1,20 +1,13 @@
 // feed-service.ts
 import { inject, Injectable } from '@angular/core';
 import { TReport } from '../model/feed.model';
-import {
-  Confidence,
-  ID,
-  ISODate,
-  ReportCategory,
-  ReportSource,
-} from '../../../core/models/util.model';
-import { map, Observable, tap } from 'rxjs';
+import { ID } from '../../../core/models/util.model';
+import { Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { ReportDTO } from '../model/feed.dto.model';
 
 @Injectable({ providedIn: 'root' })
 export class FeedService {
-  readonly URL = `http://127.0.0.1:8000/forms/user/1`;
+  readonly URL = `http://127.0.0.1:8000/forms/?limit=100&offset=0`;
   private store = new Map<ID, TReport>();
   private http = inject(HttpClient);
 
@@ -36,13 +29,14 @@ export class FeedService {
    * Zwraca zaktualizowany raport (serwerowa prawda).
    */
 
-  vote(reportId: ID, value: 1 | -1): Observable<TReport> {
-    const url = `http://127.0.0.1:8000/forms/${encodeURIComponent(reportId)}/${
-      value ? 'like' : 'dislike'
-    }`;
-    return this.http
-      .post<TReport>(url, { value })
-      .pipe(tap((report) => this.store.set(report.id, report)));
+  // http://127.0.0.1:8000/2/like
+
+  vote(reportId: ID, value: 1 | -1): void {
+    const url = `http://127.0.0.1:8000/${reportId}/${value > 0 ? 'like' : 'dislike'}`;
+    this.http
+      .put<TReport>(url, { value })
+      .pipe(tap((report) => this.store.set(report.id, report)))
+      .subscribe();
   }
 
   getFromStore(reportId: ID): TReport | undefined {

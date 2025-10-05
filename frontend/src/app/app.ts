@@ -5,6 +5,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { AddReportDialogComponent } from './shared/components/add-report-dialog-component/add-report-dialog-component';
+import { AuthService } from './core/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { AddReportDialogComponent } from './shared/components/add-report-dialog-
 })
 export class App {
   protected readonly title = signal('frontend');
+  protected readonly authService = inject(AuthService);
 
   private dialog = inject(MatDialog);
   openAddDialog() {
