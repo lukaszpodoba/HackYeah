@@ -66,12 +66,12 @@ INSERT INTO "user" (first_name, last_name, password, role, email) VALUES
 ('Paweł', 'Wiśniewski', 'pass123', 'user', 's27735@pjwstk.edu.pl'),
 ('Katarzyna', 'Szymańska', 'pass123', 'user', 's27471@pjwstk.edu.pl'),
 ('Tomasz', 'Król', 'pass123', 'user', 's27478@pjwstk.edu.pl'),
-('Agnieszka', 'Mazur', 'pass123', 'user', 'agnieszka@gmail.com'),
-('Michał', 'Kowalczyk', 'pass123', 'user', 'michal@gmail.com'),
-('Dominika', 'Duda', 'pass123', 'user', 'diminika@gmail.com'),
-('Jan', 'Nowicki', 'pass123', 'user', 'jan@gmail.com'),
-('Ewelina', 'Krawczyk', 'pass123', 'user', 'ewelina@gmail.com'),
-('Piotr', 'Baran', 'pass123', 'user', 'piotr@gmail.com');
+('Agnieszka', 'Mazur', 'pass123', 'user', 'martademianiuk7@gmail.com'),
+('Michał', 'Kowalczyk', 'pass123', 'user', 's27735@pjwstk.edu.pl'),
+('Dominika', 'Duda', 'pass123', 'user', 's27471@pjwstk.edu.pl'),
+('Jan', 'Nowicki', 'pass123', 'user', 's27478@pjwstk.edu.pl'),
+('Ewelina', 'Krawczyk', 'pass123', 'user', 'martademianiuk7@gmail.com'),
+('Piotr', 'Baran', 'pass123', 'user', 's27471@pjwstk.edu.pl');
 
 -- ================================================
 -- user_line (relacja wiele-do-wielu)
@@ -132,31 +132,31 @@ INSERT INTO form (
   stop_id, category, line_id, delay, is_email_sent
 ) VALUES
 -- zgłoszenie na SKA5, Lotnisko (stop_id=1), departure_id=1, line_id=5
-(8, 1, '2025-10-04 10:05:00', 15, 1, 5, 0, 1, 'VEHICLE_FAILURE', 5, 4, 0),
+(8, 1, '2025-10-05 10:05:00', 15, 1, 5, 0, 1, 'VEHICLE_FAILURE', 5, 4, 0),
 -- zgłoszenie na SKA4, Kraków Główny (stop_id=7), departure_id=4, line_id=4
-(9, 4, '2025-10-04 10:45:00', 22, 1, 7, 1, 7, 'VEHICLE_FAILURE', 4, 2, 0),
+(9, 4, '2025-10-05 10:45:00', 22, 1, 7, 1, 7, 'VEHICLE_FAILURE', 4, 2, 0),
 
 -- Dodatkowe zgłoszenia dla SKA5 (user_id=8 i 10 mają przypisaną linię 5)
-(10, 2, '2025-10-04 10:20:00', 8, 0, 12, 2, 6, 'ACCIDENT', 5, 8, 0),
-(8, 3, '2025-10-04 10:30:00', 18, 1, 15, 1, 7, 'ACCIDENT', 5, 6, 0),
+(10, 2, '2025-10-05 10:20:00', 8, 0, 12, 2, 6, 'ACCIDENT', 5, 8, 0),
+(8, 3, '2025-10-05 10:30:00', 18, 1, 15, 1, 7, 'ACCIDENT', 5, 6, 0),
 
 -- Dodatkowe zgłoszenia dla SKA4 (user_id=9 ma przypisaną linię 4)
-(9, 5, '2025-10-04 11:10:00', 12, 0, 8, 3, 17, 'ROADWORKS', 4, 5, 0),
-(9, 6, '2025-10-04 11:40:00', 25, 1, 20, 0, 26, 'ROADWORKS', 4, 12, 0),
+(9, 5, '2025-10-05 11:10:00', 12, 0, 8, 3, 17, 'ROADWORKS', 4, 5, 0),
+(9, 6, '2025-10-05 11:40:00', 25, 1, 20, 0, 26, 'ROADWORKS', 4, 12, 0),
 
 -- Zgłoszenia dla SKA1 (user_id=1, 4, 5 mają przypisaną linię 1)
-(9, 1, '2025-10-04 09:15:00', 30, 1, 25, 2, 1, 'OTHER', 1, 10, 1),
-(9, 2, '2025-10-04 09:30:00', 5, 0, 6, 8, 6, 'OTHER', 1, 3, 0),
-(9, 3, '2025-10-04 09:45:00', 14, 0, 11, 4, 7, 'OTHER', 1, 2, 0),
+(9, 1, '2025-10-05 09:15:00', 30, 1, 25, 2, 1, 'OTHER', 1, 10, 1),
+(9, 2, '2025-10-05 09:30:00', 5, 0, 6, 8, 6, 'OTHER', 1, 3, 0),
+(9, 3, '2025-10-05 09:45:00', 14, 0, 11, 4, 7, 'OTHER', 1, 2, 0),
 
 -- Zgłoszenia dla SKA2 (user_id=2, 7 mają przypisaną linię 2)
-(2, 4, '2025-10-04 08:20:00', 19, 1, 18, 1, 7, 'VEHICLE_FAILURE', 2, 7, 0),
-(7, 5, '2025-10-04 08:45:00', 9, 0, 5, 6, 17, 'VEHICLE_FAILURE', 2, 4, 0),
+(2, 4, '2025-10-05 08:20:00', 19, 1, 18, 1, 7, 'VEHICLE_FAILURE', 2, 7, 0),
+(7, 5, '2025-10-05 08:45:00', 9, 0, 5, 6, 17, 'VEHICLE_FAILURE', 2, 4, 0),
 
 -- Zgłoszenia dla SKA3 (user_id=3, 6 mają przypisaną linię 3)
-(3, 6, '2025-10-04 12:15:00', 16, 0, 13, 3, 26, 'ACCIDENT', 3, 9, 0),
-(6, 1, '2025-10-04 12:30:00', 7, 0, 4, 5, 1, 'ACCIDENT', 3, 2, 0),
+(3, 6, '2025-10-05 12:15:00', 16, 0, 13, 3, 26, 'ACCIDENT', 3, 9, 0),
+(6, 1, '2025-10-05 12:30:00', 7, 0, 4, 5, 1, 'ACCIDENT', 3, 2, 0),
 
 -- Dodatkowe zgłoszenia od admina (user_id=1)
-(1, 2, '2025-10-04 13:00:00', 21, 1, 30, 0, 6, 'ROADWORKS', 5, 1, 1),
-(1, 4, '2025-10-04 13:15:00', 28, 1, 35, 1, 7, 'ROADWORKS', 4, 0, 1);
+(1, 2, '2025-10-05 13:00:00', 21, 1, 30, 0, 6, 'ROADWORKS', 5, 1, 1),
+(1, 4, '2025-10-05 13:15:00', 28, 1, 35, 1, 7, 'ROADWORKS', 4, 0, 1);
