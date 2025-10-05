@@ -1,1 +1,19 @@
-<p>login works!</p>
+<div style="max-width:320px;margin:60px auto;text-align:center;">
+  <h2>Logowanie</h2>
+
+  <input
+    [(ngModel)]="email"
+    type="email"
+    placeholder="Email"
+    style="display:block;width:100%;padding:8px;margin:8px 0;"
+  />
+
+  <input
+    [(ngModel)]="password"
+    type="password"
+    placeholder="Hasło"
+    style="display:block;width:100%;padding:8px;margin:8px 0;"
+  />
+
+  <button (click)="login()" style="padding:8px 16px;margin-top:12px;">Zaloguj</button>
+</div>

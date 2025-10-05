@@ -1,0 +1,75 @@
+<section class="flex-1 flex flex-col items-center gap-4">
+  <div class="mt-4">
+    <h2 class="text-body-large-bold">Ulubione linie</h2>
+    <p class="text-body-regular text-muted-foreground">
+      Śledź zgłoszenia na swoich ulubionych trasach
+    </p>
+  </div>
+
+  <div class="flex flex-col gap-3 p-4">
+    @for (line of lines(); track line.lineId) {
+    <div class="border rounded-xl bg-white">
+      <button
+        type="button"
+        class="w-full flex items-center justify-between gap-4 p-3 hover:bg-muted/50 rounded-xl text-left"
+        (click)="toggle(line)"
+        aria-expanded="{{ !!line.expanded }}"
+      >
+        <div class="flex items-center gap-2">
+          <span
+            class="inline-block px-2 py-0.5 rounded-md border text-xs font-medium"
+            [class.border-primary]="line.mode === 'BUS'"
+            [class.border-emerald-500]="line.mode === 'TRAM'"
+          >
+            {{ line.label }}
+          </span>
+          <span class="text-sm text-muted-foreground">
+            {{ line.mode === 'BUS' ? 'Autobus' : 'Tramwaj' }}
+          </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span class="text-xs bg-muted px-2 py-1 rounded-md">
+            {{ line.reportCount }} zgłoszeń
+          </span>
+
+          <button
+            mat-button
+            color="warn"
+            class="!min-h-0 !py-1 !px-2"
+            (click)="$event.stopPropagation(); remove(line.lineId)"
+          >
+            <mat-icon class="!w-4 !h-4">delete</mat-icon>
+            <span class="text-xs">Usuń z ulubionych</span>
+          </button>
+
+          <mat-icon
+            class="transition-transform"
+            [style.transform]="line.expanded ? 'rotate(180deg)' : 'rotate(0deg)'"
+            >expand_more</mat-icon
+          >
+        </div>
+      </button>
+
+      @if (line.expanded) {
+      <div class="p-3 pt-0">
+        @if (line.loading) {
+        <div class="flex items-center gap-2 p-4">
+          <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+          <span class="text-sm text-muted-foreground">Ładowanie zgłoszeń…</span>
+        </div>
+        } @else { @if (line.reports?.length) {
+        <div class="flex flex-col gap-3">
+          @for (r of line.reports; track r.id) {
+          <app-feed-card-component [report]="r"></app-feed-card-component>
+          }
+        </div>
+        } @else {
+        <div class="p-4 text-sm text-muted-foreground">Brak zgłoszeń dla tej linii.</div>
+        } }
+      </div>
+      }
+    </div>
+    }
+  </div>
+</section>

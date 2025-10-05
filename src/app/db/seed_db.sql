@@ -4,6 +4,7 @@ PRAGMA foreign_keys = ON;
 DELETE FROM form;
 DELETE FROM departure;
 DELETE FROM as_history;
+DELETE FROM user_line;
 DELETE FROM "user";
 DELETE FROM line;
 DELETE FROM stop;
@@ -53,19 +54,35 @@ INSERT INTO stop (stop_code, stop_name, latitude, longitude) VALUES
 (4003, 'Tarnów', 50.0130, 20.9860);
 
 -- ================================================
--- user
+-- user (bez line_id !)
 -- ================================================
-INSERT INTO "user" (first_name, last_name, password, role, line_id) VALUES
-('Marta', 'Nowak', 'admin123', 'admin', 1),
-('Paweł', 'Wiśniewski', 'pass123', 'maszynista', 2),
-('Katarzyna', 'Szymańska', 'pass123', 'dyżurny ruchu', 3),
-('Tomasz', 'Król', 'pass123', 'uzytkownik', 1),
-('Agnieszka', 'Mazur', 'pass123', 'uzytkownik', 1),
-('Michał', 'Kowalczyk', 'pass123', 'uzytkownik', 3),
-('Dominika', 'Duda', 'pass123', 'moderator', 2),
-('Jan', 'Nowicki', 'pass123', 'uzytkownik', 5),
-('Ewelina', 'Krawczyk', 'pass123', 'uzytkownik', 4),
-('Piotr', 'Baran', 'pass123', 'uzytkownik', 5);
+INSERT INTO "user" (first_name, last_name, password, role, email) VALUES
+('Marta', 'Nowak', 'admin123', 'admin', 'martademianiuk7@gmail.com'),
+('Paweł', 'Wiśniewski', 'pass123', 'maszynista', 's27735@gpjwstk.edu.pl'),
+('Katarzyna', 'Szymańska', 'pass123', 'dyżurny ruchu', 's27471@pjwstk.edu.pl'),
+('Tomasz', 'Król', 'pass123', 'uzytkownik', 's27478@pjwstk.edu.pl'),
+('Agnieszka', 'Mazur', 'pass123', 'uzytkownik', 'agnieszka@gmail.com'),
+('Michał', 'Kowalczyk', 'pass123', 'uzytkownik', 'michal@gmail.com'),
+('Dominika', 'Duda', 'pass123', 'moderator', 'diminika@gmail.com'),
+('Jan', 'Nowicki', 'pass123', 'uzytkownik', 'jan@gmail.com'),
+('Ewelina', 'Krawczyk', 'pass123', 'uzytkownik', 'ewelina@gmail.com'),
+('Piotr', 'Baran', 'pass123', 'uzytkownik', 'piotr@gmail.com');
+
+-- ================================================
+-- user_line (relacja wiele-do-wielu)
+-- ================================================
+INSERT INTO user_line (user_id, line_id) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 1),
+(5, 1),
+(6, 3),
+(7, 2),
+(8, 5),
+(9, 4),
+(10, 5);
+-- Możesz dodać więcej powiązań według potrzeb projektu
 
 -- ================================================
 -- as_history
@@ -102,10 +119,10 @@ INSERT INTO departure (line_id, stop_id, planned_arrival_time, planned_departure
 -- ================================================
 INSERT INTO form (
 user_id, departure_id, report_time, as_form, confirmed_by_admin, like_total, dislike_total,
-stop_id, category, line_id, delay
+stop_id, category, line_id, delay, is_email_sent
 ) VALUES
-(1, 1, '2025-10-04 06:40:00', 12, 1, 130, 5, 10, 'Opóźnienie pociągu', 1, 8),
-(2, 2, '2025-10-04 07:25:00', 7, 0, 75, 10, 9, 'Awaria sygnalizacji', 2, 15),
-(3, 3, '2025-10-04 08:10:00', 22, 1, 98, 4, 7, 'Utrudnienia techniczne', 3, 5),
-(4, 4, '2025-10-04 09:10:00', 9, 0, 34, 3, 6, 'Zmiana toru odjazdu', 4, 3),
-(5, 5, '2025-10-04 10:20:00', 18, 1, 210, 2, 7, 'Opóźnienie przez mgłę', 5, 12);
+(1, 1, '2025-10-04 06:40:00', 12, 1, 130, 5, 10, 'Opóźnienie pociągu', 1, 8, FALSE),
+(2, 2, '2025-10-04 07:25:00', 7, 0, 75, 10, 9, 'Awaria sygnalizacji', 2, 15, FALSE),
+(3, 3, '2025-10-04 08:10:00', 22, 1, 98, 4, 7, 'Utrudnienia techniczne', 3, 5, FALSE),
+(4, 4, '2025-10-04 09:10:00', 9, 0, 34, 3, 6, 'Zmiana toru odjazdu', 4, 3, FALSE),
+(5, 5, '2025-10-04 10:20:00', 18, 1, 210, 2, 7, 'Opóźnienie przez mgłę', 5, 12, FALSE);
