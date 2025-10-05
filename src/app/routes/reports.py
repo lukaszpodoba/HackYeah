@@ -118,6 +118,17 @@ def increment_dislike(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Report not found")
 
 
+@router.put("/{id}/accept", response_model=FormResponse)
+def accept_report(id: int, db: Session = Depends(get_db)):
+    form = db.get(Form, id)
+    if not form:
+        raise HTTPException(status_code=404, detail="Report not found")
+    form.confirmed_by_admin = True
+    db.commit()
+    db.refresh(form)
+    return form
+
+
 @router.post("/{id}/refresh", response_model=FormResponse)
 def refresh_report(id: int, db: Session = Depends(get_db)):
     """Recompute authenticity using confirmations, freshness, and time-decay."""
