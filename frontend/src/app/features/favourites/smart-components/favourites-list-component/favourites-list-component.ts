@@ -8,6 +8,7 @@ import { ID } from '../../../../core/models/util.model';
 import { FeedCardComponent } from '../../../feed/dumb-components/feed-card-component/feed-card-component';
 import { TReport } from '../../../feed/model/feed.model';
 import { FavoriteLineSummary, FavoritesService } from '../../services/favorites-service';
+import { tap } from 'rxjs';
 
 type LineView = FavoriteLineSummary & {
   expanded?: boolean;
@@ -52,11 +53,14 @@ export class FavoritesRoutesComponent implements OnInit {
 
   private loadReports(lineId: ID) {
     this.setLoading(lineId, true);
-    this.fav.getReportsForLine$(lineId).subscribe({
-      next: (reports) => this.patchLine(lineId, { reports }),
-      complete: () => this.setLoading(lineId, false),
-      error: () => this.setLoading(lineId, false),
-    });
+    this.fav
+      .getReportsForLine$(lineId)
+      .pipe(tap((data) => console.log(data)))
+      .subscribe({
+        next: (reports) => this.patchLine(lineId, { reports }),
+        complete: () => this.setLoading(lineId, false),
+        error: () => this.setLoading(lineId, false),
+      });
   }
 
   remove(lineId: ID) {

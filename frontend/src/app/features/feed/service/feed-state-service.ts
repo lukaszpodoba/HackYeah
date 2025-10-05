@@ -11,18 +11,17 @@ export class FeedStateService {
   // sortowanie „jak Yanosik”: po (up - down), potem nowsze
   readonly sortedByScore = computed<TReport[]>(() => {
     return [...this.reports()].sort((a, b) => {
-      const as = (a.votes?.up ?? 0) - (a.votes?.down ?? 0);
-      const bs = (b.votes?.up ?? 0) - (b.votes?.down ?? 0);
+      const as = (a.like_total ?? 0) - (a.dislike_total ?? 0);
+      const bs = (b.like_total ?? 0) - (b.dislike_total ?? 0);
       if (bs !== as) return bs - as;
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      return new Date(b.report_time).getTime() - new Date(a.report_time).getTime();
     });
   });
 
   constructor(private readonly feedService: FeedService) {}
 
   load(center: [number, number]) {
-    const data = this.feedService.getReports(center);
-    this.reports.set(data);
+    const data = this.feedService.getReports(center).subscribe((data) => this.reports.set(data));
   }
 
   vote(reportId: ID, value: 1 | -1) {
