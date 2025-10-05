@@ -13,6 +13,14 @@
       {{ report.category }}
     </mat-chip>
 
+    <mat-chip
+      class="!rounded-md px-2 py-1 text-xs font-medium no-default-hover-elevate no-default-active-elevate"
+      [class]="colorClassFor(report.category)"
+      data-testid="badge-category"
+    >
+      {{ report.lineId }}
+    </mat-chip>
+
     <span class="text-xs text-muted-foreground whitespace-nowrap" data-testid="text-timestamp">
       {{ report.createdAt | timeAgo }}
     </span>
