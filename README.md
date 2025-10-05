@@ -1,48 +1,95 @@
-# HackYeah - quick start
+## Polish 🇵🇱
 
-## Setup
-uv sync                 # tworzy .venv i instaluje zależności
+Skrypt **automatycznie:** *./scripts/start.sh*
+- tworzy środowisko i instaluje wszystkie zależności backendu (Python)
+- odbudowuje oraz seeduje bazę SQLite – nic nie musisz robić ręcznie
+- buduje oraz uruchamia frontend (Angular)
+- odpala backend (FastAPI, Python)
+- otwiera aplikację w przeglądarce (frontend)
 
-## Po zmianach w pyproject.toml
-uv lock                 # odśwież lockfile
-uv sync                 # zsynchronizuj środowisko
+---
 
-## Aktywacja środowiska (macOS/Linux)
-source .venv/bin/activate
+### Wymagania
 
-## Jakość kodu (Makefile)
-make format             # sformatuj i napraw proste problemy \
-make check              # lint \
-make test               # pytest
+- **Python 3.12+** (oraz narzędzie `uv`, `sqlite3`)
+- **Node.js + npm** (do frontendu)
+- **Git Bash/Zsh/Bash** (Linux/macOS lub Windows z Git Bash)
 
-## SQLite setup
-sudo apt install sqlite3                # Linux (Debian/Ubuntu) \
-brew install sqlite                     # macOS \
-https://www.sqlite.org/download.html    #windows
+*Jeśli nie masz narzędzi — skrypt w terminalu powie, czego brakuje!*
 
-### Uwtorz plik bazy
-sqlite3 src/app/db/hackyeah.db
+---
 
-### Wczytaj schemat
-.read src/app/db/db_init.sql
+### Technologie
 
-### Wczytaj dane
-.read src/app/db/seed_db.sql
+- **Backend:** Python, FastAPI, SQLAlchemy, SQLite
+- **Frontend:** Angular (TypeScript)
+- **Baza Danych:** SQLite (plik lokalny)
+- **Zarządzanie środowiskiem:** pyproject.toml + uv (brak pip req)
+- **Start całości:** Bash script
+- **Automatyczne uruchomienie w przeglądarce**
 
-### Lub wywolaj wszystko za jednym razem
-sqlite3 src/app/db/hackyeah.db ".read src/app/db/db_init.sql" ".read src/app/db/seed_db.sql"
+---
 
-### Usun baze
-rm src/app/db/hackyeah.db   #macOS \
-del src\app\db\hackyeah.db  #Windows
+### Po starcie
 
-### Uruchomienie FastAPI
-1. uvicorn src.app.main:app --reload
-2. http://127.0.0.1:8000/docs
-3. lub użyj terminala: curl http://127.0.0.1:8000/reports/1
+- **Frontend:** http://localhost:4200
+- **Backend API:** http://localhost:8000
+- **Swagger Docs:** http://localhost:8000/docs
 
+---
 
+**Nie wymaga żadnych dodatkowych kroków poza uruchomieniem skryptu.**  
+Wszystko dzieje się automatycznie!
 
+---
 
+**Zespół HackYeah**
 
+---
 
+## English 🇬🇧🇺🇸
+
+The script **automatically:** *./scripts/start.sh*
+- creates and installs backend (Python) environment and dependencies
+- rebuilds and seeds the SQLite database – no manual work required
+- builds and starts the frontend (Angular)
+- launches the backend (FastAPI, Python)
+- opens the frontend in your browser automatically
+
+---
+
+### Requirements
+
+- **Python 3.12+** (with `uv`, `sqlite3`)
+- **Node.js + npm** (for frontend)
+- **Git Bash/Zsh/Bash** (Linux/macOS or Windows with Git Bash)
+
+*If any tools are missing, the script will tell you in the terminal!*
+
+---
+
+### Technologies
+
+- **Backend:** Python, FastAPI, SQLAlchemy, SQLite
+- **Frontend:** Angular (TypeScript)
+- **Database:** SQLite (local file)
+- **Environment management:** pyproject.toml + uv
+- **Start everything:** Bash script
+- **Automatic browser launch**
+
+---
+
+### After starting
+
+- **Frontend:** http://localhost:4200
+- **Backend API:** http://localhost:8000
+- **Swagger Docs:** http://localhost:8000/docs
+
+---
+
+**You only need to run the script; nothing else is required!**  
+Everything is automatic.
+
+---
+
+**HackYeah Team**
