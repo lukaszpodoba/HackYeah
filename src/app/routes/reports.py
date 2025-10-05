@@ -53,7 +53,9 @@ def get_single_report(form_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=FormResponse)
-def create_report(payload: FormCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+def create_report(
+    payload: FormCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)
+):
     """Create report and compute initial authenticity (as_form)."""
     user = db.query(User).filter(User.id == payload.user_id).first()
     if not user:
@@ -74,7 +76,7 @@ def create_report(payload: FormCreate, background_tasks: BackgroundTasks, db: Se
     if payload.delay < 0:
         raise HTTPException(status_code=400, detail="Delay cannot be negative")
 
-    is_admin = (user.role == "admin")
+    is_admin = user.role == "admin"
 
     try:
         form = create_form_with_initial_score(
@@ -149,6 +151,7 @@ def refresh_report(id: int, db: Session = Depends(get_db)):
     except ValueError:
         raise HTTPException(status_code=404, detail="Report not found")
 
+
 @router.post("/users/{user_id}/as-daily")
 def user_as_daily(
     user_id: int,
@@ -172,9 +175,7 @@ def user_as_daily(
 
 
 def send_as_notification(form, db, background_tasks):
-    users = db.query(User)\
-        .join(User.lines)\
-        .filter(Line.id == form.line_id).all()
+    users = db.query(User).join(User.lines).filter(Line.id == form.line_id).all()
 
     subject = f"🚨 Wysoki wskaźnik AS na linii {form.line_id}"
     body = f"""

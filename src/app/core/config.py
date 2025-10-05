@@ -6,8 +6,8 @@ conf = ConnectionConfig(
     MAIL_FROM="zpotson@gmail.com",
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
-    MAIL_STARTTLS=True,      # włączone TLS
-    MAIL_SSL_TLS=False,      # zamiast MAIL_SSL
+    MAIL_STARTTLS=True,  # włączone TLS
+    MAIL_SSL_TLS=False,  # zamiast MAIL_SSL
     USE_CREDENTIALS=True,
-    VALIDATE_CERTS=True
+    VALIDATE_CERTS=True,
 )
