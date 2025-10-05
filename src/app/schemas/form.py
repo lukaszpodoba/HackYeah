@@ -11,6 +11,18 @@ class FormCreate(BaseModel):
     line_id: int
     delay: int
 
+
+class StopBase(BaseModel):
+    id: int
+    stop_code: int
+    stop_name: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+    class Config:
+        orm_mode = True
+
+
 class FormResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
@@ -25,3 +37,4 @@ class FormResponse(BaseModel):
     category: Optional[str] = None
     line_id: Optional[int] = None
     delay: Optional[int] = None
+    stop: Optional[StopBase] = None
