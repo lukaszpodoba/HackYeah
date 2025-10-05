@@ -3,11 +3,12 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 
+from sqlalchemy import select
 from src.app.db.dependencies import get_db
 from src.app.services.email_service import send_email
 from fastapi import BackgroundTasks
-from src.app.models.items import Form, User, Departure, Stop, Line
-from src.app.schemas.form import FormCreate, FormResponse
+from src.app.models.items import Form, User, Departure, Stop, Line, user_line
+from src.app.schemas.form import FormCreate, FormResponse, GroupedFormsResponse
 from src.app.services.scoring_db_core import (
     create_form_with_initial_score,
     refresh_form_score,
@@ -19,6 +20,30 @@ from src.app.schemas.form import RouteResponse
 from src.app.services.route_service import find_route
 
 router = APIRouter()
+
+
+@router.get("/users/{user_id}/lines/reports", response_model=List[GroupedFormsResponse])
+def get_user_lines_reports(user_id: int, db: Session = Depends(get_db)):
+    line_ids = db.execute(
+        select(user_line.c.line_id).where(user_line.c.user_id == user_id)
+    ).scalars().all()
+    if not line_ids:
+        raise HTTPException(status_code=404, detail="User not assigned to any line")
+
+    result = []
+    for line_id in line_ids:
+        forms = db.query(Form)\
+            .options(joinedload(Form.stop))\
+            .filter(Form.line_id == line_id)\
+            .all()
+        forms_sorted = sorted(
+            forms,
+            key=lambda f: (f.as_form is not None, f.as_form),  # None na koniec
+            reverse=True
+        )
+        forms_response = [FormResponse.model_validate(form) for form in forms_sorted]
+        result.append(GroupedFormsResponse(line_id=line_id, forms=forms_response))
+    return result
 
 
 # Getting all forms
