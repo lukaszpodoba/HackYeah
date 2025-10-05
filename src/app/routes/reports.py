@@ -170,7 +170,7 @@ def accept_report(id: int, background_tasks: BackgroundTasks, db: Session = Depe
                     background_tasks.add_task(send_email, subject, [user.email], body)
 
             form.is_email_sent = True
-            
+
     db.commit()
     db.refresh(form)
     return form
@@ -205,17 +205,3 @@ def user_as_daily(
         return {"user_id": user_id, "stored_as_value": val}
     except ValueError:
         raise HTTPException(status_code=404, detail="User not found")
-
-# send email
-@router.post("/send_email")
-async def send_email_endpoint(background_tasks: BackgroundTasks):
-    subject = "Dziękujemy za zgłoszenie"
-    body = """
-        <h3>Cześć Marta,</h3>
-        <p>Dziękujemy za przesłanie formularza.</p>
-        <p>Twój formularz został zapisany w systemie i oczekuje na weryfikację.</p>
-        <br>
-        <small>Zespół HackYeah Rail App 🚆</small>
-    """
-    background_tasks.add_task(send_email, subject, ["martademianiuk7@gmail.com"], body)
-    return {"message": "Email został wysłany w tle"}
