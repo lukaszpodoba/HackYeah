@@ -1,5 +1,4 @@
 from typing import List, Optional
-from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -21,8 +20,6 @@ router = APIRouter()
 @router.get("/forms/", response_model=List[FormResponse])
 def get_all_forms(db: Session = Depends(get_db)):
     forms = db.query(Form).all()
-    if not forms:
-        raise HTTPException(status_code=404, detail="No forms found")
     return forms
 
 
